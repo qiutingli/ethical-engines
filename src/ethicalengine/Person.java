@@ -15,26 +15,13 @@ public class Person extends Character
     enum Profession{DOCTOR, CEO, CRIMINAL, HOMELESS, UNEMPLOYED, UNKNOWN, NONE}
     
     public Person() {
-        if (this.getAgeCategory() == AgeCategory.ADULT){
-            this.profession = Profession.UNKNOWN;
-        } else {
-            this.profession = Profession.NONE;
-        }
+        this.profession = this.getAgeCategory() == AgeCategory.ADULT? Profession.UNKNOWN : Profession.NONE;
     }
     
     public Person(int age, Profession profession, Gender gender, BodyType bodytype, boolean isPregnant) {
         super(age, gender, bodytype);
-        if (this.getAgeCategory() == AgeCategory.ADULT){
-            this.profession = profession;
-        } else {
-            this.profession = Profession.NONE;
-        }
-        if (this.getGender() == Gender.FEMALE) {
-            this.isPregnant = isPregnant;
-        }
-//        else {
-//            System.out.println("Only a female can set pregnant!");
-//        }
+        this.profession = this.getAgeCategory() == AgeCategory.ADULT? profession : Profession.NONE;
+        this.isPregnant = this.getGender() == Gender.FEMALE && isPregnant;
     }
 
     public Person(Person otherPerson) {
@@ -77,9 +64,6 @@ public class Person extends Character
         if (this.getGender() == Gender.FEMALE) {
             this.isPregnant = pregnant;
         }
-//        else {
-//            System.out.println("Only a female can be set to be pregnant!");
-//        }
     }
     
     public boolean isYou() {
@@ -92,7 +76,7 @@ public class Person extends Character
     
     @Override
     public String toString() {
-//        [you] <bodyType> <age category> [profession] <gender> [pregnant]
+        // [you] <bodyType> <age category> [profession] <gender> [pregnant]
         List<String> summaryList = new ArrayList<>();
         if (this.isYou){
             summaryList.add("you");
