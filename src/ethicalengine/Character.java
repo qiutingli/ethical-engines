@@ -5,9 +5,9 @@ public abstract class Character {
     private Gender gender;
     private BodyType bodyType;
 
-    enum Gender{MALE, FEMALE, UNKNOWN}
+    public enum Gender{MALE, FEMALE, UNKNOWN}
 
-    enum BodyType{AVERAGE, ATHLETIC, OVERWEIGHT, UNSPECIFIED}
+    public enum BodyType{AVERAGE, ATHLETIC, OVERWEIGHT, UNSPECIFIED}
     
     public Character() {
         this.age = 0;

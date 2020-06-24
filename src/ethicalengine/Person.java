@@ -10,9 +10,9 @@ public class Person extends Character
     private boolean isPregnant;
     public boolean isYou;
 
-    enum AgeCategory{BABY, CHILD, ADULT, SENIOR}
+    public enum AgeCategory{BABY, CHILD, ADULT, SENIOR}
 
-    enum Profession{DOCTOR, CEO, CRIMINAL, HOMELESS, UNEMPLOYED, UNKNOWN, NONE}
+    public enum Profession{DOCTOR, CEO, CRIMINAL, HOMELESS, UNEMPLOYED, UNKNOWN, NONE}
     
     public Person() {
         this.profession = this.getAgeCategory() == AgeCategory.ADULT? Profession.UNKNOWN : Profession.NONE;
