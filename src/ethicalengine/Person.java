@@ -8,7 +8,7 @@ public class Person extends Character
 {
     private Profession profession;
     private boolean isPregnant;
-    private boolean isYou;
+    public boolean isYou;
 
     enum AgeCategory{BABY, CHILD, ADULT, SENIOR}
 
@@ -31,22 +31,23 @@ public class Person extends Character
         }
         if (this.getGender() == Gender.FEMALE) {
             this.isPregnant = isPregnant;
-        } else {
-            System.out.println("Only a female can set pregnant!");
         }
+//        else {
+//            System.out.println("Only a female can set pregnant!");
+//        }
     }
-    
+
     public Person(Person otherPerson) {
         super(otherPerson);
         this.profession = otherPerson.profession;
         this.isPregnant = otherPerson.isPregnant;
         this.isYou = otherPerson.isYou;
     }
-    
+
     public static boolean isBetween(int age, int lower, int upper) {
         return lower <= age && age <= upper;
     }
-    
+
     public AgeCategory getAgeCategory() {
         int age = this.getAge();
         if (isBetween(age, 0, 4)) {
@@ -60,25 +61,25 @@ public class Person extends Character
         }
         throw new IllegalArgumentException("Invalid age");
     }
-    
+
     public Profession getProfession() {
         if (this.getAgeCategory() == AgeCategory.ADULT) {
             return this.profession;
         }
         return Profession.NONE;
     }
-    
+
     public boolean isPregnant() {
         return this.getGender() == Gender.FEMALE && this.isPregnant;
     }
-    
+
     public void setPregnant(boolean pregnant) {
         if (this.getGender() == Gender.FEMALE) {
             this.isPregnant = pregnant;
         }
-        else {
-            System.out.println("Only a female can be set to be pregnant!");
-        }
+//        else {
+//            System.out.println("Only a female can be set to be pregnant!");
+//        }
     }
     
     public boolean isYou() {
