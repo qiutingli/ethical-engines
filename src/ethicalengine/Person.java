@@ -1,74 +1,83 @@
 package ethicalengine;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
 
 public class Person extends Character
 {
-    private Person.Profession profession;
+    private Profession profession;
     private boolean isPregnant;
     private boolean isYou;
 
     enum AgeCategory{BABY, CHILD, ADULT, SENIOR}
 
-    enum Profession{DOCTOR, CEO, CRIMINAL, HOMELESS, UNEMPLOYED, UNKNOWN}
+    enum Profession{DOCTOR, CEO, CRIMINAL, HOMELESS, UNEMPLOYED, UNKNOWN, NONE}
     
     public Person() {
-        this.profession = null;
+        if (this.getAgeCategory() == AgeCategory.ADULT){
+            this.profession = Profession.UNKNOWN;
+        } else {
+            this.profession = Profession.NONE;
+        }
     }
     
-    public Person(final int age, final Person.Profession profession, final Character.Gender gender, final Character.BodyType bodytype, final boolean isPregnant) {
+    public Person(int age, Profession profession, Gender gender, BodyType bodytype, boolean isPregnant) {
         super(age, gender, bodytype);
-        this.profession = null;
-        this.profession = profession;
-        this.isPregnant = isPregnant;
+        if (this.getAgeCategory() == AgeCategory.ADULT){
+            this.profession = profession;
+        } else {
+            this.profession = Profession.NONE;
+        }
+        if (this.getGender() == Gender.FEMALE) {
+            this.isPregnant = isPregnant;
+        } else {
+            System.out.println("Only a female can set pregnant!");
+        }
     }
     
-    public Person(final Person otherPerson) {
+    public Person(Person otherPerson) {
         super(otherPerson);
-        this.profession = null;
         this.profession = otherPerson.profession;
         this.isPregnant = otherPerson.isPregnant;
+        this.isYou = otherPerson.isYou;
     }
     
-    public static boolean isBetween(final int age, final int lower, final int upper) {
+    public static boolean isBetween(int age, int lower, int upper) {
         return lower <= age && age <= upper;
     }
     
-    public Person.AgeCategory getAgeCategory() {
-        final int age = this.getAge();
+    public AgeCategory getAgeCategory() {
+        int age = this.getAge();
         if (isBetween(age, 0, 4)) {
-            return Person.AgeCategory.BABY;
-        }
-        if (isBetween(age, 5, 16)) {
-            return Person.AgeCategory.CHILD;
-        }
-        if (isBetween(age, 17, 68)) {
-            return Person.AgeCategory.ADULT;
-        }
-        if (age > 68) {
-            return Person.AgeCategory.SENIOR;
+            return AgeCategory.BABY;
+        } else if (isBetween(age, 5, 16)) {
+            return AgeCategory.CHILD;
+        } else if (isBetween(age, 17, 68)) {
+            return AgeCategory.ADULT;
+        } else if (age > 68) {
+            return AgeCategory.SENIOR;
         }
         throw new IllegalArgumentException("Invalid age");
     }
     
-    public Person.Profession getProfession() {
-        if (this.getAgeCategory() == Person.AgeCategory.ADULT) {
+    public Profession getProfession() {
+        if (this.getAgeCategory() == AgeCategory.ADULT) {
             return this.profession;
         }
-        return null;
+        return Profession.NONE;
     }
     
     public boolean isPregnant() {
-        return this.getGender() == Character.Gender.FEMALE && this.isPregnant;
+        return this.getGender() == Gender.FEMALE && this.isPregnant;
     }
     
-    public void setPregnant(final boolean pregnant) {
-        if (this.getGender() == Character.Gender.FEMALE) {
+    public void setPregnant(boolean pregnant) {
+        if (this.getGender() == Gender.FEMALE) {
             this.isPregnant = pregnant;
         }
         else {
-            System.out.println("Only a female can set pregnant!");
+            System.out.println("Only a female can be set to be pregnant!");
         }
     }
     
@@ -76,24 +85,39 @@ public class Person extends Character
         return this.isYou;
     }
     
-    public void setAsYou(final boolean isYou) {
+    public void setAsYou(boolean isYou) {
         this.isYou = isYou;
     }
     
     @Override
     public String toString() {
-        final List<String> words = Arrays.asList(String.valueOf(this.isYou), String.valueOf(this.getBodyType()), String.valueOf(this.getAgeCategory()), String.valueOf(this.getProfession()), String.valueOf(this.getGender()), String.valueOf(this.isPregnant));
-        final String output = String.join(" ", words);
-        return output.toLowerCase();
+//        [you] <bodyType> <age category> [profession] <gender> [pregnant]
+        List<String> summaryList = new ArrayList<>();
+        if (this.isYou){
+            summaryList.add("you");
+        }
+        summaryList.add(String.valueOf(this.getBodyType()));
+        summaryList.add(String.valueOf(this.getAgeCategory()));
+        if (this.profession != Profession.NONE && this.profession != null){
+            summaryList.add(String.valueOf(this.getProfession()));
+        }
+        summaryList.add(String.valueOf(String.valueOf(this.getGender())));
+        if (this.isPregnant){
+            summaryList.add("pregnant");
+        }
+        String summary = String.join(" ", summaryList);
+        return summary.toLowerCase();
     }
     
-    public static void main(final String[] args) {
-        final Person person = new Person();
-        final Person person2 = new Person(person);
-        System.out.println(person2.getGender());
-        System.out.println(person.getAgeCategory());
-        System.out.println(person.getProfession());
-        System.out.println(person.isPregnant);
-        System.out.println(person.toString());
+    public static void main(String[] args) {
+        Person person = new Person(27, Profession.DOCTOR, Gender.MALE, BodyType.ATHLETIC, true);
+        person.setAsYou(true);
+        Person person1 = new Person(person);
+        System.out.println("Gender: " + person1.getGender());
+        System.out.println("Age Category: " + person.getAgeCategory());
+        System.out.println("Profession: " + person.getProfession());
+        System.out.println("Pregnancy: " + person.isPregnant);
+        System.out.println("Person summary: " + person.toString());
+        System.out.println("Person copy summary: " + person1.toString());
     }
 }
