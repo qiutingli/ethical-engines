@@ -3,8 +3,8 @@ package ethicalengine;
 import java.util.Arrays;
 
 public class Scenario {
-    private Character[] passengers;
-    private Character[] pedestrians;
+    private final Character[] passengers;
+    private final Character[] pedestrians;
     private boolean isLegalCrossing;
 
     public Scenario(Character[] passengers, Character[] pedestrians, boolean isLegalCrossing){
