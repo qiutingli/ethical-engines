@@ -8,15 +8,10 @@ public class Person extends Character
     private Person.Profession profession;
     private boolean isPregnant;
     private boolean isYou;
-    
-    enum Profession(){
-        DOCTOR, 
-        CEO, 
-        CRIMINAL, 
-        HOMELESS, 
-        UNEMPLOYED, 
-        UNKNOWN
-    }
+
+    enum AgeCategory{BABY, CHILD, ADULT, SENIOR}
+
+    enum Profession{DOCTOR, CEO, CRIMINAL, HOMELESS, UNEMPLOYED, UNKNOWN}
     
     public Person() {
         this.profession = null;

@@ -1,10 +1,13 @@
 package ethicalengine;
 
-public abstract class Character
-{
+public abstract class Character {
     private int age;
     private Character.Gender gender;
     private Character.BodyType bodyType;
+
+    enum Gender{MALE, FEMALE, UNKNOWN}
+
+    enum BodyType{AVERAGE, ATHLETIC, OVERWEIGHT, UNSPECIFIED}
     
     public Character() {
         this.gender = Character.Gender.UNKNOWN;
