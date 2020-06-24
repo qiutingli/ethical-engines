@@ -1,60 +1,49 @@
 package ethicalengine;
 
-public class Character {
+public abstract class Character
+{
     private int age;
-    private Gender gender;
-    private Bodytype bodyType;
-
-    enum Gender{
-        FEMALE,
-        MALE,
-        UNKNOWN}
-
-    enum Bodytype{
-        AVERAGE,
-        ATHLETIC,
-        OVERWEIGHT,
-        UNSPECIFIED}
-
-    public Character(){
-        this.gender = Gender.UNKNOWN;
-        this.bodyType = Bodytype.UNSPECIFIED;
-
+    private Character.Gender gender;
+    private Character.BodyType bodyType;
+    
+    public Character() {
+        this.gender = Character.Gender.UNKNOWN;
+        this.bodyType = Character.BodyType.UNSPECIFIED;
     }
-
-    public Character(int age, Gender gender, Bodytype bodyType) {
+    
+    public Character(final int age, final Character.Gender gender, final Character.BodyType bodyType) {
         this.age = age;
         this.gender = gender;
         this.bodyType = bodyType;
     }
-
-    public Character(Character c ){
-
+    
+    public Character(final Character c) {
+        this.age = c.age;
+        this.gender = c.gender;
+        this.bodyType = c.bodyType;
     }
-
-    public int getAge(){
+    
+    public int getAge() {
         return this.age;
     }
-
-    public Gender getGender(){
+    
+    public Character.Gender getGender() {
         return this.gender;
     }
-
-    public Bodytype getBodyType(){
+    
+    public Character.BodyType getBodyType() {
         return this.bodyType;
     }
-
-    public void setAge(int age){
+    
+    public void setAge(final int age) {
         this.age = age;
     }
-
-    public void setGender(Gender gender){
+    
+    public void setGender(final Character.Gender gender) {
         this.gender = gender;
     }
-
-    public void setBodyType(Bodytype bodyType){
+    
+    public void setBodyType(final Character.BodyType bodyType) {
         this.bodyType = bodyType;
     }
-
-
 }
