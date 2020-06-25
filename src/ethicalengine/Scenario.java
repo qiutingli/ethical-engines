@@ -1,6 +1,5 @@
 package ethicalengine;
 
-import java.util.Arrays;
 
 public class Scenario {
     private final Character[] passengers;
@@ -57,11 +56,11 @@ public class Scenario {
 
     @Override
     public String toString() {
-        StringBuilder summary = new StringBuilder("\n" +
+        StringBuilder summary = new StringBuilder(
                 "======================================\n" +
                 "# Scenario\n" +
                 "======================================\n" +
-                "Legal Crossing: " + (this.isLegalCrossing? "yes":"no") + "\n" +
+                "Legal Crossing: " + (this.isLegalCrossing? "yes" : "no") + "\n" +
                 "Passengers (" + this.getPassengerCount() + ")\n");
         for (Character character : this.passengers){
             summary.append("- ").append(character.toString()).append("\n");

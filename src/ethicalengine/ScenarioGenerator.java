@@ -45,7 +45,7 @@ public class ScenarioGenerator {
     }
 
     public Person getRandomPerson(){
-        int age = this.random.nextInt(120);
+        int age = this.random.nextInt(100);
         Character.Gender[] genderValues = Character.Gender.values();
         Character.Gender gender = genderValues[this.random.nextInt(genderValues.length)];
         Character.BodyType[] bodyTypeValues = Character.BodyType.values();
@@ -57,13 +57,13 @@ public class ScenarioGenerator {
     }
 
     public Animal getRandomAnimal(){
-//        TODO: Check the requirements for randomize ann animal
-//        byte[] array = new byte[5];
-//        this.random.nextBytes(array);
-//        String species = new String(array, Charset.forName("UTF-8"));
-        String species = random.ints(97, 122 + 1).limit(5)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
+        // TODO: Check the requirements for randomize an animal
+        String[] animals = {"dog", "cat", "bird"};
+        String species = animals[random.nextInt(3)];
+//        // Randomly generate a string as an animal's name
+//        String species = random.ints(97, 122 + 1).limit(5)
+//                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+//                .toString();
         boolean isPet = this.random.nextBoolean();
         Animal animal = new Animal(species);
         animal.setPet(isPet);
