@@ -1,0 +1,106 @@
+                   __-------__
+                 / _---------_ \
+                / /           \ \
+                | |           | |
+                |_|___________|_|
+            /-\|                 |/-\
+           | _ |\       0       /| _ |
+           |(_)| \      !      / |(_)|
+           |___|__\_____!_____/__|___|
+           [_______|COMP90041|_______] 
+            ||||    ~~~~~~~~~    ||||
+            `--'                 `--'
+
+    $$\      $$\                              $$\                                
+    $$$\    $$$ |                             $$ |                               
+    $$$$\  $$$$ | $$$$$$\   $$$$$$\  $$$$$$\  $$ |                               
+    $$\$$\$$ $$ |$$  __$$\ $$  __$$\ \____$$\ $$ |                               
+    $$ \$$$  $$ |$$ /  $$ |$$ |  \__|$$$$$$$ |$$ |                               
+    $$ |\$  /$$ |$$ |  $$ |$$ |     $$  __$$ |$$ |                               
+    $$ | \_/ $$ |\$$$$$$  |$$ |     \$$$$$$$ |$$ |                               
+    \__|     \__| \______/ \__|      \_______|\__|                               
+    $$\      $$\                     $$\       $$\                               
+    $$$\    $$$ |                    $$ |      \__|                              
+    $$$$\  $$$$ | $$$$$$\   $$$$$$$\ $$$$$$$\  $$\ $$$$$$$\   $$$$$$\   $$$$$$$\ 
+    $$\$$\$$ $$ | \____$$\ $$  _____|$$  __$$\ $$ |$$  __$$\ $$  __$$\ $$  _____|
+    $$ \$$$  $$ | $$$$$$$ |$$ /      $$ |  $$ |$$ |$$ |  $$ |$$$$$$$$ |\$$$$$$\  
+    $$ |\$  /$$ |$$  __$$ |$$ |      $$ |  $$ |$$ |$$ |  $$ |$$   ____| \____$$\ 
+    $$ | \_/ $$ |\$$$$$$$ |\$$$$$$$\ $$ |  $$ |$$ |$$ |  $$ |\$$$$$$$\ $$$$$$$  |
+    \__|     \__| \_______| \_______|\__|  \__|\__|\__|  \__| \_______|\_______/ 
+
+
+Welcome to Moral Machines! 
+    
+The idea of Moral Machines is based on the Trolley Dilemma, a fictional scenario presenting a decision maker with a moral dilemma: choosing ”the lesser of two evils”. The scenario entails an autonomous car whose brakes fail at a pedestrian crossing. As it is too late to relinquish control to the car’s passengers, the car needs to make a decision. Now.
+
+The answers are not straightforward. There are a number of variables at play, which influence how people may feel about the decision: the number of pedestrians or passengers, whether the pedestrians are crossing the street legally, and personal characteristics that our automomous car can somehow infer (people's body tye, profession, gender, age, etc.). This program is a thought experiment, which explores how decisions should be made by auditing algorithms and collecting user feedback. You, the user of this program, will be put into (im)possible situations, left to decide about life and death.
+Do you consent to have your decisions saved to a file? (yes/no)
+======================================
+# Scenario
+======================================
+Legal Crossing: yes
+Passengers (3)
+- average adult doctor female
+- overweight adult unknown male
+- average baby female
+Pedestrians (4)
+- average senior male
+- average adult ceo female pregnant
+- athletic child male
+- dog is pet
+Who should be saved? (passenger(s) [1] or pedestrian(s) [2])
+======================================
+# Scenario
+======================================
+Legal Crossing: no
+Passengers (2)
+- average adult unknown female pregnant
+- athletic adult criminal male
+Pedestrians (4)
+- cat is pet
+- bird
+- athletic adult doctor female
+- average baby male
+Who should be saved? (passenger(s) [1] or pedestrian(s) [2])
+======================================
+# Scenario
+======================================
+Legal Crossing: no
+Passengers (1)
+- overweight senior male
+Pedestrians (5)
+- athletic child female
+- athletic child male
+- athletic child female
+- athletic child female
+- athletic child male
+Who should be saved? (passenger(s) [1] or pedestrian(s) [2])
+======================================
+# User Audit
+======================================
+- % SAVED AFTER 3 RUNS
+ceo: 1.0
+child: 1.0
+criminal: 1.0
+dog: 1.0
+pregnant: 1.0
+athletic: 0.8
+female: 0.6
+male: 0.6
+person: 0.6
+adult: 0.5
+average: 0.5
+green: 0.5
+pet: 0.5
+red: 0.5
+senior: 0.5
+unknown: 0.5
+animal: 0.3
+baby: 0.0
+bird: 0.0
+cat: 0.0
+doctor: 0.0
+overweight: 0.0
+--
+average age: 24.6
+That's all. Press Enter to quit.
