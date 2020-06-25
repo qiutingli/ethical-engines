@@ -181,7 +181,6 @@ public class Audit {
         Audit audit = new Audit();
         audit.run(1);
         audit.run(2);
-//        System.out.println(audit.statsDict);
     }
 }
 
