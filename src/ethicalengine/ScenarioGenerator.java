@@ -1,8 +1,4 @@
 package ethicalengine;
-
-import java.lang.reflect.Array;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -75,11 +71,11 @@ public class ScenarioGenerator {
     }
 
     private int getRandNumWithinRange(int min, int max){
-        return this.random.nextInt(max - min) + min;
+        return this.random.nextInt(max - min + 1) + min;
     }
 
     private Character[] generateCharacters(int numCharacters){
-        List<Character> characterList = new ArrayList<Character>();
+        List<Character> characterList = new ArrayList<>();
         for (int i=0; i<numCharacters; i++){
             if (random.nextBoolean()){
                 Person person = getRandomPerson();
