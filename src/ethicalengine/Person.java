@@ -55,6 +55,12 @@ public class Person extends Character
         return Profession.NONE;
     }
 
+    public void setProfession(Profession profession) {
+        if (this.getAgeCategory() == AgeCategory.ADULT) {
+            this.profession = profession;
+        }
+    }
+
     public boolean isPregnant() {
         return this.getGender() == Gender.FEMALE && this.isPregnant;
     }
@@ -98,6 +104,7 @@ public class Person extends Character
         Person person = new Person(27, Profession.DOCTOR, Gender.MALE, BodyType.ATHLETIC, true);
         person.setAsYou(true);
         Person person1 = new Person(person);
+        person1.setGender(null);
         System.out.println("Gender: " + person1.getGender());
         System.out.println("Age Category: " + person.getAgeCategory());
         System.out.println("Profession: " + person.getProfession());
