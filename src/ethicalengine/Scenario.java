@@ -9,7 +9,7 @@ public class Scenario {
     public Scenario(Character[] passengers, Character[] pedestrians, boolean isLegalCrossing){
         this.passengers = passengers;
         this.pedestrians = pedestrians;
-        this.isLegalCrossing =isLegalCrossing;
+        this.isLegalCrossing = isLegalCrossing;
     }
 
     public boolean hasYouInCar(){
