@@ -7,11 +7,15 @@ public class Animal extends Character{
     private String species;
     private boolean isPet;
 
+    public Animal() {
+
+    }
+
     public Animal(String species){
         this.species = species;
     }
 
-    public Animal(Animal otherAnimal){
+    public Animal(Animal otherAnimal) {
         this.species = otherAnimal.species;
         this.isPet = otherAnimal.isPet;
     }
