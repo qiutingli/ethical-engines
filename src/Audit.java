@@ -1,5 +1,12 @@
 import ethicalengine.*;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -164,7 +171,7 @@ public class Audit {
         }
         String averageAge = ((double) this.totalAge/this.totalPeople + "");
         averageAge = averageAge.substring(0, averageAge.indexOf(".")+2);
-        summaryStringBuilder.append("--\n" + "average age: ").append(averageAge);
+        summaryStringBuilder.append("--\n" + "average age: ").append(averageAge).append("\n");
         return summaryStringBuilder.toString();
     }
 
@@ -177,10 +184,36 @@ public class Audit {
         System.out.println(this.toString());
     }
 
+    public void printToFile(String filepath){
+        String directoryName = filepath.substring(0, filepath.indexOf("/"));
+        String fileName = filepath.substring(0, filepath.indexOf("/"));
+        File directory = new File(directoryName);
+        if (directoryName.equals("logs") && ! directory.exists()){
+            // If require it to make the entire directory path including parents, use directory.mkdirs() instead.
+            directory.mkdir();
+        }
+
+        File file = new File(filepath);
+        try{
+            FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(this.toString());
+            bw.close();
+        }
+        catch (IOException e){
+//            e.printStackTrace();
+            System.out.println("ERROR: could not print results. Target directory does not exist.");
+            System.exit(-1);
+        }
+    }
+
     public static void main(String[] args) {
         Audit audit = new Audit();
-        audit.run(1);
-        audit.run(2);
+        audit.run(10);
+        audit.run(50);
+        audit.run(100);
+        audit.printToFile("logs/results.log");
+//        System.out.println("logs/results.log".substring("logs/results.log".indexOf("/")+1));
     }
 }
 
