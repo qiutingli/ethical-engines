@@ -44,6 +44,7 @@ public class Animal extends Character{
         return summary.toLowerCase();
     }
 
+    // For test
     public static void main(String[] args) {
         Animal animal = new Animal("cat");
         animal.setPet(true);

@@ -92,7 +92,8 @@ public class Person extends Character
         String summary = String.join(" ", summaryList);
         return summary.toLowerCase();
     }
-    
+
+    // For test
     public static void main(String[] args) {
         Person person = new Person(27, Profession.DOCTOR, Gender.MALE, BodyType.ATHLETIC, true);
         person.setAsYou(true);

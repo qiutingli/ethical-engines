@@ -72,6 +72,7 @@ public class Scenario {
         return summary.toString();
     }
 
+    // For test
     public static void main(String[] args) {
         Character[] passengers = {new Animal("cat"), new Person(5, Person.Profession.NONE, Character.Gender.MALE,
                 Character.BodyType.OVERWEIGHT, false)};

@@ -99,6 +99,7 @@ public class ScenarioGenerator {
         return new Scenario(passengers, pedestrians, isLegal);
     }
 
+    // For test
     public static void main(String[] args) {
         ScenarioGenerator generator = new ScenarioGenerator(25, 1, 5, 1, 5);
         Person person = generator.getRandomPerson();
