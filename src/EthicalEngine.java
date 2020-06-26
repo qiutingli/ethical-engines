@@ -3,6 +3,7 @@ import ethicalengine.Character;
 import ethicalengine.Person;
 import ethicalengine.Scenario;
 
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -11,6 +12,12 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class EthicalEngine {
+    // The following variables are used for readConfigFile. Note EthicalEngine does not have a constructor.
+    private Scenario scenario;
+    private boolean isLegalCrossing = false;
+    private ArrayList<Character> passengers = new ArrayList<>();
+    private ArrayList<Character> pedestrians = new ArrayList<>();
+    private boolean firstScenario = true;
 
     public enum Decision{PASSENGERS, PEDESTRIANS}
 
@@ -19,15 +26,9 @@ public class EthicalEngine {
         for (Character character : characters){
             if (character instanceof Person){
                 saveScoreAcc += 1;
-                if (((Person) character).isPregnant()){
-                    saveScoreAcc += 1;
-                }
-                if (character.getBodyType() == Character.BodyType.ATHLETIC){
-                    saveScoreAcc -= 0.5;
-                }
-                if (((Person) character).getProfession() == Person.Profession.DOCTOR){
-                    saveScoreAcc += 0.5;
-                }
+                if (((Person) character).isPregnant()) saveScoreAcc += 1;
+                if (character.getBodyType() == Character.BodyType.ATHLETIC) saveScoreAcc -= 0.5;
+                if (((Person) character).getProfession() == Person.Profession.DOCTOR) saveScoreAcc += 0.5;
             }
         }
         return saveScoreAcc;
@@ -51,35 +52,51 @@ public class EthicalEngine {
         return null;
     }
 
+    private Character.Gender getGender(String gender){
+        return switch (gender) {
+            case "male" -> Character.Gender.MALE;
+            case "female" -> Character.Gender.FEMALE;
+            case "unknown" -> Character.Gender.UNKNOWN;
+            // TODO: Handle invalid gender input
+            default -> null;
+        };
+    }
+
+    private Character.BodyType getBodyType(String bodyType){
+        return switch (bodyType) {
+            case "average" -> Character.BodyType.AVERAGE;
+            case "athletic" -> Character.BodyType.ATHLETIC;
+            case "overweight" -> Character.BodyType.OVERWEIGHT;
+            // TODO: Handle invalid bodyType input
+            default -> null;
+        };
+    }
+
+    private Person.Profession getProfession(String profession){
+        return switch (profession) {
+            case "doctor" -> Person.Profession.DOCTOR;
+            case "ceo" -> Person.Profession.CEO;
+            case "criminal" -> Person.Profession.CRIMINAL;
+            case "homeless" -> Person.Profession.HOMELESS;
+            case "unemployed" -> Person.Profession.UNEMPLOYED;
+            case "unknown" -> Person.Profession.UNKNOWN;
+            case "none" -> Person.Profession.NONE;
+            // TODO: Handle invalid bodyType input
+            default -> null;
+        };
+    }
+
     private Character generateCharacter(String[] characterAttributes){
         Character character;
         if (characterAttributes[0].equals("person")){
             character = new Person();
-            switch (characterAttributes[1]) {
-                case "male":
-                    character.setGender(Character.Gender.MALE);
-                    break;
-                case "female":
-                    character.setGender(Character.Gender.FEMALE);
-                    break;
-                default:
-                    // TODO: Invalid input
-            }
+            character.setGender(this.getGender(characterAttributes[1]));
             // TODO: Handle invalid age
             character.setAge(Integer.parseInt(characterAttributes[2]));
-            switch (characterAttributes[3]){
-                case "average":
-                    character.setBodyType(Character.BodyType.AVERAGE);
-                    break;
-                case "athletic":
-                    character.setBodyType(Character.BodyType.ATHLETIC);
-                    break;
-                case "overweight":
-                    character.setBodyType(Character.BodyType.OVERWEIGHT);
-                    break;
-                default:
-                    // TODO: Invalid input
-            }
+            character.setBodyType(this.getBodyType(characterAttributes[3]));
+            ((Person) character).setProfession(this.getProfession(characterAttributes[4]));
+            ((Person) character).setPregnant(Boolean.parseBoolean(characterAttributes[5]));
+            ((Person) character).setAsYou(Boolean.parseBoolean(characterAttributes[6]));
         } else if (characterAttributes[0].equals("animal")) {
             character = new Animal(characterAttributes[7]);
             boolean isPet = Boolean.parseBoolean(characterAttributes[8]); // false if it is null
@@ -91,59 +108,58 @@ public class EthicalEngine {
         return character;
     }
 
+    private void saveScenario(Scenario scenario){
+        if (scenario != null){
+            // TODO: Save scenario
+            System.out.println(scenario.toString());
+        }
+    }
+
+    private void handleScenarioBreaks(String[] characterAttributes){
+        String scenarioStart = characterAttributes[0];
+        if (scenarioStart.equals("scenario:green") || scenarioStart.equals("scenario:red")){
+            if (this.firstScenario) {
+                this.isLegalCrossing = scenarioStart.equals("scenario:green");
+                this.firstScenario = false;
+            } else {
+                this.scenario = extractScenario(this.passengers, this.pedestrians, this.isLegalCrossing);
+                this.saveScenario(scenario);
+                this.isLegalCrossing = scenarioStart.equals("scenario:green");
+                this.passengers = new ArrayList<>();
+                this.pedestrians = new ArrayList<>();
+            }
+        } else {
+            // TODO: handle invalid config line
+            System.out.println("Invalid traffic light line: " + String.join(",", characterAttributes));
+        }
+    }
+
+    private void handleScenarioCharacters(String[] characterAttributes){
+        Character character = generateCharacter(characterAttributes);
+        if (characterAttributes[9].equals("passenger")) this.passengers.add(character);
+        else if (characterAttributes[9].equals("pedestrian")) this.pedestrians.add(character);
+        else if (String.join(",", characterAttributes).equals("class,gender,age,bodyType,profession,pregnant,isYou,species,isPet,role"));
+        else System.out.println("Invalid character line: " + String.join(",", characterAttributes));
+    }
+
     protected void readConfigFile(String pathToCsv) throws IOException {
         File csvFile = new File(pathToCsv);
         if (csvFile.isFile()) {
             try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
                 String csvLine;
-                Scenario scenario;
-                boolean isLegalCrossing = false;
-                ArrayList<Character> passengers = new ArrayList<>();
-                ArrayList<Character> pedestrians = new ArrayList<>();
                 while ((csvLine = br.readLine()) != null) {
                     String[] characterAttributes = csvLine.split(",");
-                    if (characterAttributes.length == 1){
-                        if (characterAttributes[0].equals("scenario:green")){
-                            isLegalCrossing = true;
-                            scenario = extractScenario(passengers, pedestrians, isLegalCrossing);
-                            if (scenario != null){
-                                // TODO: Save scenario
-                                System.out.println(scenario.toString());
-                            }
-                            passengers = new ArrayList<>();
-                            pedestrians = new ArrayList<>();
-                        } else if (characterAttributes[0].equals("scenario:red")){
-                            isLegalCrossing = false;
-                            scenario = extractScenario(passengers, pedestrians, isLegalCrossing);
-                            if (scenario != null){
-                                // TODO: Save scenario
-                                System.out.println(scenario.toString());
-                            }
-                            passengers = new ArrayList<>();
-                            pedestrians = new ArrayList<>();
-                        } else {
-                            // TODO: handle invalid config line
-                        }
-                    } else if (characterAttributes.length == 10){
-                        Character character = generateCharacter(characterAttributes);
-                        if (characterAttributes[9].equals("passenger")) passengers.add(character);
-                        else pedestrians.add(character);
-                    } else {
-                        // TODO: handle invalid config line
-                    }
+                    if (characterAttributes.length == 1) handleScenarioBreaks(characterAttributes);
+                    else if (characterAttributes.length == 10) handleScenarioCharacters(characterAttributes);
+                    else System.out.println("Invalid csv line: "  + csvLine);
                 }
-                if (passengers.size() > 0 && pedestrians.size() > 0){
-                    // TODO: Handle isLegalCrossing not initiated
-                    scenario = extractScenario(passengers, pedestrians, isLegalCrossing);
-                    if (scenario != null){
-                        // TODO: Save scenario
-                        System.out.println(scenario.toString());
-                    }
+                if (this.passengers.size() > 0 && this.pedestrians.size() > 0){
+                    // Handle the last scenario
+                    this.scenario = extractScenario(this.passengers, this.pedestrians, this.isLegalCrossing);
+                    this.saveScenario(this.scenario);
                 }
             }
-        } else {
-            throw new IOException();
-        }
+        } else throw new IOException();
     }
 
     public static void main(String[] args) {
