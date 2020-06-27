@@ -23,6 +23,7 @@ public class Audit {
     public String resultPath;
     public EthicalEngine.Decision userDecision;
     public Scanner scanner;
+    public boolean saveUserDecision;
 
     public Audit() { }
 
@@ -166,7 +167,7 @@ public class Audit {
         }
         String averageAge = ((double) this.totalAge/this.totalPeople + "");
         averageAge = averageAge.substring(0, averageAge.indexOf(".")+2);
-        summaryStringBuilder.append("--\n" + "average age: ").append(averageAge).append("\n");
+        summaryStringBuilder.append("--\n" + "average age: ").append(averageAge);
         return summaryStringBuilder.toString();
     }
 
@@ -217,7 +218,7 @@ public class Audit {
                 }
                 updateStats(scenario, this.userDecision);
             }
-            this.printToFile("logs/user.log");
+            if (this.saveUserDecision) { this.printToFile("logs/user.log"); }
         } else {
             for (int i = 0; i < runs; i++) {
                 Scenario scenario = this.generator.generate();
@@ -230,11 +231,25 @@ public class Audit {
 
     public void run(){
         this.runs = this.scenarios.length;
-        for (Scenario scenario : this.scenarios) {
-            EthicalEngine.Decision decision = this.engine.decide(scenario);
-            updateStats(scenario, decision);
+        if (this.auditType.equals("User")) {
+            for (Scenario scenario : this.scenarios) {
+                System.out.println(scenario);
+                System.out.println("\nWho should be saved? (passenger(s) [1] or pedestrian(s) [2])");
+                String input = this.scanner.nextLine();
+                switch (input) {
+                    case "passenger", "passengers", "1" -> this.userDecision = EthicalEngine.Decision.PASSENGERS;
+                    case "pedestrian", "pedestrians", "2" -> this.userDecision = EthicalEngine.Decision.PEDESTRIANS;
+                }
+                updateStats(scenario, this.userDecision);
+            }
+            if (this.saveUserDecision) { this.printToFile("logs/user.log"); }
+        } else {
+            for (Scenario scenario : this.scenarios) {
+                EthicalEngine.Decision decision = this.engine.decide(scenario);
+                updateStats(scenario, decision);
+            }
+            this.printToFile(Objects.requireNonNullElse(this.resultPath, "logs/results.log"));
         }
-        this.printToFile(Objects.requireNonNullElse(this.resultPath, "logs/results.log"));
     }
 
     public static void main(String[] args) throws IOException {
