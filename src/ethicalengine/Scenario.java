@@ -63,7 +63,7 @@ public class Scenario {
                 "Legal Crossing: " + (this.isLegalCrossing? "yes" : "no") + "\n" +
                 "Passengers (" + this.getPassengerCount() + ")\n");
         for (Character character : this.passengers){
-            summary.append("- ").append(character.toString()).append("\n");
+            summary.append("-x ").append(character.toString()).append("\n");
         }
         summary.append("Pedestrians (").append(this.getPedestrianCount()).append(")\n");
         for (Character character : this.pedestrians){
