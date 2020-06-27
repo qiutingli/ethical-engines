@@ -1,7 +1,5 @@
-import ethicalengine.Animal;
+import ethicalengine.*;
 import ethicalengine.Character;
-import ethicalengine.Person;
-import ethicalengine.Scenario;
 
 import javax.swing.*;
 import java.io.BufferedReader;
@@ -11,6 +9,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+
 public class EthicalEngine {
     private ArrayList<Scenario> scenarios = new ArrayList<>();
     // The following variables are used for readConfigFile. Note EthicalEngine does not have a constructor.
@@ -19,6 +18,7 @@ public class EthicalEngine {
     private ArrayList<Character> passengers = new ArrayList<>();
     private ArrayList<Character> pedestrians = new ArrayList<>();
     private boolean firstScenario = true;
+    private boolean validArguments = false;
 
     public enum Decision{PASSENGERS, PEDESTRIANS}
 
@@ -178,30 +178,68 @@ public class EthicalEngine {
         } else throw new IOException();
     }
 
-    public static void main(String[] args) {
-        EthicalEngine ethicalEngine = new EthicalEngine();
-        boolean validArguments = false;
-        if (args.length > 1){
-            // TODO: Improve arguments
-            if ((args[0].equals("--config") || args[0].equals("-c")) && args[1].contains("/")){
-                if (args[1].substring(0, args[1].lastIndexOf("/")).equals("SelfTest/data")){
-                    validArguments = true;
-                    try {
-                        Scenario[] scenarios = ethicalEngine.readConfigFile(args[1]);
-                        for (Scenario scenario : scenarios){ System.out.println(scenario.toString()); }
-                    } catch (IOException e) {
-                        System.out.println("ERROR: could not find config file.");
-                        System.exit(-1);
-                    }
+    private void handleControl(String[] args) {
+        if (args.length == 1) {
+            this.handleHelp();
+        } else if (args[1].contains("/")){
+            if (args[1].substring(0, args[1].lastIndexOf("/")).equals("SelfTest/data")){
+                this.validArguments = true;
+                try {
+                    Scenario[] scenarios = this.readConfigFile(args[1]);
+                    for (Scenario scenario : scenarios){ System.out.println(scenario.toString()); }
+                } catch (IOException e) {
+                    System.out.println("ERROR: could not find config file.");
+                    System.exit(-1);
                 }
             }
         }
-        if (!validArguments) System.out.println("ERROR: Invalid command arguments.");
+    }
+
+    private void handleHelp() {
+        System.out.println(
+                "EthicalEngine - COMP90041 - Final Project\n\n" +
+                        "Usage: java EthicalEngine [arguments]\n\n" +
+                        "Arguments:\n" +
+                        "-c or --config      Optional: path to config file\n" +
+                        "-h or --help        Print Help (this message) and exit\n" +
+                        "-r or --results     Optional: path to results log file\n" +
+                        "-i or --interactive Optional: launches interactive mode");
+    }
+
+    private void handleResults(String[] args) {
+        String path = args[1];
+    }
+
+    private void handleInteractive(String[] args) {
+        if (args.length == 1) {
+            ScenarioGenerator generator = new ScenarioGenerator();
+        }
+    }
+
+    public static void main(String[] args) {
+        EthicalEngine ethicalEngine = new EthicalEngine();
+        Audit audit= new Audit();
+        if (args.length > 0){
+            String option = args[0];
+            switch (option) {
+                case "--config", "-c" -> ethicalEngine.handleControl(args);
+                case "--help", "-h" -> ethicalEngine.handleHelp();
+                case "--results", "-r" -> ethicalEngine.handleResults(args);
+                case "--interactive", "-i" -> ethicalEngine.handleInteractive(args);
+            }
+        }
+        if (!ethicalEngine.validArguments) System.out.println("ERROR: Invalid command arguments.");
 
 //        // For Test
 //        Character[] passengers = {new Animal("cat"), new Person()};
 //        Character[] pedestrians = {new Person(), new Person()};
 //        Scenario scenario = new Scenario(passengers, pedestrians, true);
 //        System.out.println(ethicalEngine.decide(scenario));
+
+//        Options options = new Options();
+//        Option input = new Option("i", "input", true, "input file path");
+//        input.setRequired(true);
+//        options.addOption(input);
+
     }
 }
