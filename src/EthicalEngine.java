@@ -258,33 +258,40 @@ public class EthicalEngine {
         System.out.println("Would you like to continue? (yes/no)");
         do {
             input = this.scanner.nextLine();
-            if (input.equals("yes")) {
-
-            } else {
-                // TODO: Handle inputs are not yes or no
-            }
+            this.userContinue = input.equals("yes");
         } while (!(input.equals("yes") || input.equals("no")));
     }
 
     private void handleInteractive(String[] args) {
         if (args.length == 1) {
             this.validArguments = true;
-            this.printInteractiveWelcome();
-            this.handleSavingDecision();
             Audit audit = new Audit();
             audit.setAuditType("User");
+            this.printInteractiveWelcome();
+            this.handleSavingDecision();
+            audit.saveUserDecision = this.saveUserResult;
             int numScenarios = new Random().nextInt(10);
             audit.scanner = this.scanner;
             audit.run(3);
             this.handleContinueDecision();
+            while (this.userContinue) {
+                audit.run(3);
+                this.handleContinueDecision();
+            }
         } else if (args.length == 3
                 && (args[1].equals("--config") || args[1].equals("-c"))) {
             this.validArguments = true;
-            this.printInteractiveWelcome();
-            this.handleSavingDecision();
             try {
                 Scenario[] scenarios = this.readConfigFile(args[2]);
-                for (Scenario scenario : scenarios){ System.out.println(scenario.toString()); }
+                Audit audit = new Audit(scenarios);
+                audit.setAuditType("User");
+                this.printInteractiveWelcome();
+                this.handleSavingDecision();
+                audit.saveUserDecision = this.saveUserResult;
+                audit.scanner = this.scanner;
+                audit.run();
+                System.out.println("That’s all. Press Enter to quit.");
+                if(scanner.nextLine().isEmpty()) System.exit(-1);
             } catch (IOException e) {
                 System.out.println("ERROR: could not find config file.");
                 System.exit(-1);
