@@ -14,14 +14,17 @@ public class Audit {
     private final ScenarioGenerator generator = new ScenarioGenerator();
     private final Random random = new Random();
     private final EthicalEngine engine = new EthicalEngine();
+    private Scenario[] scenarios;
     private int runs;
     private String auditType = "Unspecified";
     private Map<String, ArrayList<Integer>> statsDict = new HashMap<>();
     private int totalPeople = 0;
     private int totalAge = 0;
 
-    public Audit(){
+    public Audit() { }
 
+    public Audit(Scenario[] scenarios) {
+        this.scenarios = scenarios;
     }
 
     public void setAuditType(String name){
@@ -120,17 +123,6 @@ public class Audit {
         }
     }
 
-    public void run(int runs){
-        this.runs += runs;
-        for (int i = 0; i < runs; i++){
-            this.setCharacterNumbers();
-            Scenario scenario = this.generator.generate();
-            EthicalEngine.Decision decision = this.engine.decide(scenario);
-            updateStats(scenario, decision);
-        }
-        this.printStatistic();
-    }
-
     private String AddCharactSurvRate(String characteristic, double rate){
         rate = Math.round(rate * 10) / 10.0;
         return characteristic + ": " + rate + "\n";
@@ -185,6 +177,7 @@ public class Audit {
     }
 
     public void printToFile(String filepath){
+        this.printStatistic();
         String directoryName = filepath.substring(0, filepath.indexOf("/"));
         String fileName = filepath.substring(0, filepath.indexOf("/"));
         File directory = new File(directoryName);
@@ -207,12 +200,36 @@ public class Audit {
         }
     }
 
-    public static void main(String[] args) {
+    public void run(int runs){
+        this.runs += runs;
+        for (int i = 0; i < runs; i++) {
+            this.setCharacterNumbers();
+            Scenario scenario = this.generator.generate();
+            EthicalEngine.Decision decision = this.engine.decide(scenario);
+            updateStats(scenario, decision);
+        }
+        this.printToFile("logs/results.log");
+    }
+
+    public void run(){
+        this.runs = this.scenarios.length;
+        for (Scenario scenario : this.scenarios) {
+            EthicalEngine.Decision decision = this.engine.decide(scenario);
+            updateStats(scenario, decision);
+        }
+        this.printToFile("logs/results.log");
+    }
+
+    public static void main(String[] args) throws IOException {
         Audit audit = new Audit();
         audit.run(10);
         audit.run(50);
         audit.run(100);
-        audit.printToFile("logs/results.log");
+
+        EthicalEngine engine = new EthicalEngine();
+        Scenario[] scenarios = engine.readConfigFile("SelfTest/data/config1");
+        Audit audit1 = new Audit(scenarios);
+        audit1.run();
 //        System.out.println("logs/results.log".substring("logs/results.log".indexOf("/")+1));
     }
 }
