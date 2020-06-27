@@ -21,6 +21,8 @@ public class Audit {
     private int totalPeople = 0;
     private int totalAge = 0;
     public String resultPath;
+    public EthicalEngine.Decision userDecision;
+    public Scanner scanner;
 
     public Audit() { }
 
@@ -203,12 +205,27 @@ public class Audit {
 
     public void run(int runs){
         this.runs += runs;
-        for (int i = 0; i < runs; i++) {
-            Scenario scenario = this.generator.generate();
-            EthicalEngine.Decision decision = this.engine.decide(scenario);
-            updateStats(scenario, decision);
+        if (this.auditType.equals("User")) {
+            for (int i = 0; i < runs; i++) {
+                Scenario scenario = this.generator.generate();
+                System.out.println(scenario);
+                System.out.println("\nWho should be saved? (passenger(s) [1] or pedestrian(s) [2])");
+                String input = this.scanner.nextLine();
+                switch (input) {
+                    case "passenger", "passengers", "1" -> this.userDecision = EthicalEngine.Decision.PASSENGERS;
+                    case "pedestrian", "pedestrians", "2" -> this.userDecision = EthicalEngine.Decision.PEDESTRIANS;
+                }
+                updateStats(scenario, this.userDecision);
+            }
+            this.printToFile("logs/user.log");
+        } else {
+            for (int i = 0; i < runs; i++) {
+                Scenario scenario = this.generator.generate();
+                EthicalEngine.Decision decision = this.engine.decide(scenario);
+                updateStats(scenario, decision);
+            }
+            this.printToFile("logs/results.log");
         }
-        this.printToFile("logs/results.log");
     }
 
     public void run(){
