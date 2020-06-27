@@ -29,7 +29,7 @@ public class EthicalEngine {
 
     public enum Decision{PASSENGERS, PEDESTRIANS}
 
-    private int processSaveScore(Character[] characters){
+    private static int processSaveScore(Character[] characters){
         int saveScoreAcc = 0;
         for (Character character : characters){
             if (character instanceof Person){
@@ -42,7 +42,7 @@ public class EthicalEngine {
         return saveScoreAcc;
     }
 
-    public Decision decide(Scenario scenario){
+    public static Decision decide(Scenario scenario){
         // Save passenger if saveScore >= 0, save pedestrians otherwise.
         int saveScore = scenario.isLegalCrossing()? -1 : 1;
         int acc1 = processSaveScore(scenario.getPassengers());
