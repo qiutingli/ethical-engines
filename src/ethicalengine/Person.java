@@ -16,6 +16,10 @@ public class Person extends Character
     public Person() {
         this.profession = this.getAgeCategory() == AgeCategory.ADULT? Profession.UNKNOWN : Profession.NONE;
     }
+
+    public Person(int age, Gender gender, BodyType bodytype) {
+        super(age, gender, bodytype);
+    }
     
     public Person(int age, Profession profession, Gender gender, BodyType bodytype, boolean isPregnant) {
         super(age, gender, bodytype);
@@ -30,7 +34,7 @@ public class Person extends Character
         this.isYou = otherPerson.isYou;
     }
 
-    public static boolean isBetween(int age, int lower, int upper) {
+    public boolean isBetween(int age, int lower, int upper) {
         return lower <= age && age <= upper;
     }
 
