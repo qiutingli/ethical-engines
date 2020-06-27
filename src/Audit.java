@@ -4,9 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,6 +51,7 @@ public class Audit {
         /*
         Update the characteristic statistics
          */
+        // TODO: Exclude default keys like none, add keys like animal.
         ArrayList<Integer> survivalAndTotal;
         int survivalIncrease = survived? 1:0;
         survivalAndTotal = new ArrayList<>(Arrays.asList(survivalIncrease, 1));
@@ -127,21 +125,24 @@ public class Audit {
         }
     }
 
-    private String AddCharactSurvRate(String characteristic, double rate){
-        rate = Math.round(rate * 10) / 10.0;
-        return characteristic + ": " + rate + "\n";
+    private String addCharactSurvRate(String characteristic, double rate){
+//        rate = Math.round(rate * 10) / 10.0;
+        String truncatedRate = String.valueOf(rate).substring(0,3);
+        return characteristic + ": " + truncatedRate + "\n";
     }
 
-    public HashMap<String, Double> generateDescendOrderedStats(){
+    public Map<String, Double> generateDescendOrderedStats(){
         /*
         Produce stats in descending order
          */
-        HashMap<String, Double> sortedStats = new HashMap<>();
+        HashMap<String, Double> survivalStats = new HashMap<>();
         for (Map.Entry<String, ArrayList<Integer>> entry : this.statsDict.entrySet()){
             String characteristic = entry.getKey();
             ArrayList<Integer> survivalAndTotal = entry.getValue();
-            sortedStats.put(characteristic, (double) survivalAndTotal.get(0)/survivalAndTotal.get(1));
+            survivalStats.put(characteristic, (double) survivalAndTotal.get(0)/survivalAndTotal.get(1));
         }
+        // Apply alphabet order and then descending order
+        Map<String, Double> sortedStats = new TreeMap<>(survivalStats);
         sortedStats = sortedStats
                 .entrySet()
                 .stream()
@@ -154,15 +155,16 @@ public class Audit {
     }
 
     public String generateStatistic(){
-        StringBuilder summaryStringBuilder = new StringBuilder("======================================\n" +
+        StringBuilder summaryStringBuilder = new StringBuilder(
+                "======================================\n" +
                 "# " + this.auditType + " Audit\n" +
                 "======================================\n" +
                 "- % SAVED AFTER ").append(this.runs).append(" RUNS\n");
-        HashMap<String, Double> descendOrderedStats = generateDescendOrderedStats();
+        Map<String, Double> descendOrderedStats = generateDescendOrderedStats();
         for (Map.Entry<String, Double> entry : descendOrderedStats.entrySet()) {
             String characteristic = entry.getKey();
             double survivalAndTotal = entry.getValue();
-            summaryStringBuilder.append(AddCharactSurvRate(characteristic, survivalAndTotal));
+            summaryStringBuilder.append(addCharactSurvRate(characteristic, survivalAndTotal));
         }
         String averageAge = ((double) this.totalAge/this.totalPeople + "");
         averageAge = averageAge.substring(0, averageAge.indexOf(".")+2);
