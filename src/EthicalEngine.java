@@ -89,11 +89,8 @@ public class EthicalEngine {
         if (characterAttributes[0].equals("person")){
             character = new Person();
             character.setGender(this.getGender(characterAttributes[1]));
-            try {
-                character.setAge(Integer.parseInt(characterAttributes[2]));
-            } catch (Exception e) {
-                throw new NumberFormatException();
-            }
+            try { character.setAge(Integer.parseInt(characterAttributes[2])); }
+            catch (Exception e) { throw new NumberFormatException(); }
             character.setBodyType(this.getBodyType(characterAttributes[3]));
             ((Person) character).setProfession(this.getProfession(characterAttributes[4]));
             ((Person) character).setPregnant(Boolean.parseBoolean(characterAttributes[5]));
@@ -112,11 +109,10 @@ public class EthicalEngine {
     private void saveScenario(Scenario scenario){
         if (scenario != null){
             this.scenarios.add(scenario);
-            System.out.println(scenario.toString());
         }
     }
 
-    private void handleScenarioBreaks(String[] characterAttributes){
+    private void handleScenarioBreaks(String[] characterAttributes) throws InvalidDataFormatException {
         String scenarioStart = characterAttributes[0];
         if (scenarioStart.equals("scenario:green") || scenarioStart.equals("scenario:red")){
             if (this.firstScenario) {
@@ -130,8 +126,8 @@ public class EthicalEngine {
                 this.pedestrians = new ArrayList<>();
             }
         } else {
-            // TODO: handle invalid config line
             System.out.println("Invalid traffic light line: " + String.join(",", characterAttributes));
+            throw new InvalidDataFormatException();
         }
     }
 
@@ -155,7 +151,7 @@ public class EthicalEngine {
         else e.printStackTrace();
     }
 
-    protected void readConfigFile(String pathToCsv) throws IOException {
+    protected ArrayList<Scenario> readConfigFile(String pathToCsv) throws IOException {
         File csvFile = new File(pathToCsv);
         if (csvFile.isFile()) {
             try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
@@ -177,6 +173,7 @@ public class EthicalEngine {
                     this.scenario = extractScenario(this.passengers, this.pedestrians, this.isLegalCrossing);
                     this.saveScenario(this.scenario);
                 }
+                return scenarios;
             }
         } else throw new IOException();
     }
@@ -189,7 +186,8 @@ public class EthicalEngine {
                 if (args[1].substring(0, args[1].lastIndexOf("/")).equals("SelfTest/data")){
                     validArguments = true;
                     try {
-                        ethicalEngine.readConfigFile(args[1]);
+                        ArrayList<Scenario> scenarios = ethicalEngine.readConfigFile(args[1]);
+                        for (Scenario scenario : scenarios){ System.out.println(scenario.toString()); }
                     } catch (IOException e) {
                         System.out.println("ERROR: could not find config file.");
                         System.exit(-1);
