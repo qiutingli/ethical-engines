@@ -181,7 +181,6 @@ public class Audit {
     }
 
     public void printToFile(String filepath){
-        this.printStatistic();
         String directoryName = filepath.substring(0, filepath.indexOf("/"));
         String fileName = filepath.substring(0, filepath.indexOf("/"));
         File directory = new File(directoryName);
@@ -189,7 +188,6 @@ public class Audit {
             // If require it to make the entire directory path including parents, use directory.mkdirs() instead.
             directory.mkdir();
         }
-
         File file = new File(filepath);
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
@@ -225,34 +223,47 @@ public class Audit {
             for (int i = 0; i < runs; i++) {
                 Scenario scenario = this.generator.generate();
                 System.out.println(scenario);
-                System.out.println("\nWho should be saved? (passenger(s) [1] or pedestrian(s) [2])");
+                System.out.println("Who should be saved? (passenger(s) [1] or pedestrian(s) [2])");
                 handleUserDecisionInput();
                 updateStats(scenario, this.userDecision);
             }
+            this.printStatistic();
             if (this.saveUserDecision) { this.printToFile("logs/user.log"); }
         } else {
             for (int i = 0; i < runs; i++) {
                 Scenario scenario = this.generator.generate();
-                EthicalEngine.Decision decision = this.engine.decide(scenario);
+                EthicalEngine.Decision decision = EthicalEngine.decide(scenario);
                 updateStats(scenario, decision);
             }
+            this.printStatistic();
             this.printToFile("logs/results.log");
         }
     }
 
     public void run(){
         this.runs = this.scenarios.length;
+        int runsAcc = 0;
         if (this.auditType.equals("User")) {
-            for (Scenario scenario : this.scenarios) {
+            for (int i = 0; i < this.runs; i++) {
+                if (runsAcc == 3) {
+                    System.out.println("Would you like to continue? (yes/no)");
+                    String input = this.scanner.nextLine();
+                    this.printStatistic();
+                    if (input.equals("no")) break;
+                    runsAcc = 0;
+                }
+                runsAcc++;
+                Scenario scenario = this.scenarios[i];
                 System.out.println(scenario);
-                System.out.println("\nWho should be saved? (passenger(s) [1] or pedestrian(s) [2])");
+                System.out.println("Who should be saved? (passenger(s) [1] or pedestrian(s) [2])");
                 this.handleUserDecisionInput();
                 updateStats(scenario, this.userDecision);
             }
+            this.printStatistic();
             if (this.saveUserDecision) { this.printToFile("logs/user.log"); }
         } else {
             for (Scenario scenario : this.scenarios) {
-                EthicalEngine.Decision decision = this.engine.decide(scenario);
+                EthicalEngine.Decision decision = EthicalEngine.decide(scenario);
                 updateStats(scenario, decision);
             }
             this.printToFile(this.resultPath);
@@ -265,10 +276,10 @@ public class Audit {
         audit.run(50);
         audit.run(100);
 
-        EthicalEngine engine = new EthicalEngine();
-        Scenario[] scenarios = engine.readConfigFile("SelfTest/data/config1");
-        Audit audit1 = new Audit(scenarios);
-        audit1.run();
+//        EthicalEngine engine = new EthicalEngine();
+//        Scenario[] scenarios = engine.readConfigFile("SelfTest/data/config1");
+//        Audit audit1 = new Audit(scenarios);
+//        audit1.run();
 //        System.out.println("logs/results.log".substring("logs/results.log".indexOf("/")+1));
     }
 }
