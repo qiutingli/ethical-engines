@@ -249,7 +249,7 @@ public class EthicalEngine {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    private boolean analyzeInput(String input) throws InvalidInputException {
+    private boolean analyzeSavingInput(String input) throws InvalidInputException {
         if (input.equals("yes")) {
             return true;
         } else if (input.equals("no")) {
@@ -264,9 +264,19 @@ public class EthicalEngine {
         System.out.println("\nDo you consent to have your decisions saved to a file? (yes/no)");
         do {
             input = this.scanner.nextLine();
-            try { this.saveUserResult = this.analyzeInput(input); }
+            try { this.saveUserResult = this.analyzeSavingInput(input); }
             catch (InvalidInputException e) { System.out.println(e.getMessage()); }
         } while (!(input.equals("yes") || input.equals("no")));
+    }
+
+    private boolean analyzeContinueInput(String input) throws InvalidInputException {
+        if (input.equals("yes")) {
+            return true;
+        } else if (input.equals("no")) {
+            return false;
+        } else {
+            throw new InvalidInputException("Invalid response. Would you like to continue? (yes/no)");
+        }
     }
 
     private void handleContinueDecision() {
@@ -274,37 +284,38 @@ public class EthicalEngine {
         System.out.println("Would you like to continue? (yes/no)");
         do {
             input = this.scanner.nextLine();
-            this.userContinue = input.equals("yes");
+            try { this.userContinue = this.analyzeContinueInput(input); }
+            catch (InvalidInputException e) { System.out.println(e.getMessage()); }
+
         } while (!(input.equals("yes") || input.equals("no")));
+    }
+
+    private Audit getUserAudit(boolean withConfig, Scenario... scenarios) {
+        Audit audit = withConfig? new Audit(scenarios) : new Audit();
+        audit.setAuditType("User");
+        this.printInteractiveWelcome();
+        this.handleSavingDecision();
+        audit.saveUserDecision = this.saveUserResult;
+        audit.scanner = this.scanner;
+        return audit;
     }
 
     private void handleInteractive(String[] args) {
         if (args.length == 1) {
             this.validArguments = true;
-            Audit audit = new Audit();
-            audit.setAuditType("User");
-            this.printInteractiveWelcome();
-            this.handleSavingDecision();
-            audit.saveUserDecision = this.saveUserResult;
+            Audit audit = this.getUserAudit(false);
             int numScenarios = new Random().nextInt(10);
-            audit.scanner = this.scanner;
             audit.run(3);
             this.handleContinueDecision();
             while (this.userContinue) {
                 audit.run(3);
                 this.handleContinueDecision();
             }
-        } else if (args.length == 3
-                && (args[1].equals("--config") || args[1].equals("-c"))) {
+        } else if (args.length == 3 && (args[1].equals("--config") || args[1].equals("-c"))) {
             this.validArguments = true;
             try {
                 Scenario[] scenarios = this.readConfigFile(args[2]);
-                Audit audit = new Audit(scenarios);
-                audit.setAuditType("User");
-                this.printInteractiveWelcome();
-                this.handleSavingDecision();
-                audit.saveUserDecision = this.saveUserResult;
-                audit.scanner = this.scanner;
+                Audit audit = this.getUserAudit(true, scenarios);
                 audit.run();
                 System.out.println("That’s all. Press Enter to quit.");
                 if(scanner.nextLine().isEmpty()) System.exit(-1);
