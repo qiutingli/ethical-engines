@@ -151,7 +151,7 @@ public class EthicalEngine {
         else e.printStackTrace();
     }
 
-    protected ArrayList<Scenario> readConfigFile(String pathToCsv) throws IOException {
+    protected Scenario[] readConfigFile(String pathToCsv) throws IOException {
         File csvFile = new File(pathToCsv);
         if (csvFile.isFile()) {
             try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
@@ -173,7 +173,7 @@ public class EthicalEngine {
                     this.scenario = extractScenario(this.passengers, this.pedestrians, this.isLegalCrossing);
                     this.saveScenario(this.scenario);
                 }
-                return scenarios;
+                return this.scenarios.toArray(new Scenario[this.scenarios.size()]);
             }
         } else throw new IOException();
     }
@@ -182,11 +182,12 @@ public class EthicalEngine {
         EthicalEngine ethicalEngine = new EthicalEngine();
         boolean validArguments = false;
         if (args.length > 1){
+            // TODO: Improve arguments
             if ((args[0].equals("--config") || args[0].equals("-c")) && args[1].contains("/")){
                 if (args[1].substring(0, args[1].lastIndexOf("/")).equals("SelfTest/data")){
                     validArguments = true;
                     try {
-                        ArrayList<Scenario> scenarios = ethicalEngine.readConfigFile(args[1]);
+                        Scenario[] scenarios = ethicalEngine.readConfigFile(args[1]);
                         for (Scenario scenario : scenarios){ System.out.println(scenario.toString()); }
                     } catch (IOException e) {
                         System.out.println("ERROR: could not find config file.");
