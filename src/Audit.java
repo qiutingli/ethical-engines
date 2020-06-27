@@ -20,6 +20,7 @@ public class Audit {
     private Map<String, ArrayList<Integer>> statsDict = new HashMap<>();
     private int totalPeople = 0;
     private int totalAge = 0;
+    public String resultPath;
 
     public Audit() { }
 
@@ -203,7 +204,6 @@ public class Audit {
     public void run(int runs){
         this.runs += runs;
         for (int i = 0; i < runs; i++) {
-            this.setCharacterNumbers();
             Scenario scenario = this.generator.generate();
             EthicalEngine.Decision decision = this.engine.decide(scenario);
             updateStats(scenario, decision);
@@ -217,7 +217,7 @@ public class Audit {
             EthicalEngine.Decision decision = this.engine.decide(scenario);
             updateStats(scenario, decision);
         }
-        this.printToFile("logs/results.log");
+        this.printToFile(Objects.requireNonNullElse(this.resultPath, "logs/results.log"));
     }
 
     public static void main(String[] args) throws IOException {
