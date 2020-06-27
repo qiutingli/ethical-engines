@@ -1,13 +1,17 @@
 import ethicalengine.*;
 import ethicalengine.Character;
 
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Array;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
 
 
 public class EthicalEngine {
@@ -19,6 +23,9 @@ public class EthicalEngine {
     private ArrayList<Character> pedestrians = new ArrayList<>();
     private boolean firstScenario = true;
     private boolean validArguments = false;
+    private Scanner scanner = new Scanner(System.in);
+    private boolean saveUserResult;
+    private boolean userContinue;
 
     public enum Decision{PASSENGERS, PEDESTRIANS}
 
@@ -182,6 +189,7 @@ public class EthicalEngine {
         if (args.length == 1) {
             this.handleHelp();
         } else if (args[1].contains("/")){
+            // TODO: Check if a path necessarily contains a "/"
             if (args[1].substring(0, args[1].lastIndexOf("/")).equals("SelfTest/data")){
                 this.validArguments = true;
                 try {
@@ -196,6 +204,7 @@ public class EthicalEngine {
     }
 
     private void handleHelp() {
+        this.validArguments = true;
         System.out.println(
                 "EthicalEngine - COMP90041 - Final Project\n\n" +
                         "Usage: java EthicalEngine [arguments]\n\n" +
@@ -207,18 +216,84 @@ public class EthicalEngine {
     }
 
     private void handleResults(String[] args) {
+        this.validArguments = true;
         String path = args[1];
+    }
+
+    private String readFile(Charset encoding) throws IOException {
+        byte[] encoded = Files.readAllBytes(Paths.get("SupplementaryFiles/welcome.ascii"));
+        return new String(encoded, encoding);
+    }
+
+    private void printInteractiveWelcome() {
+        Charset cs = StandardCharsets.US_ASCII;
+        try {
+            String welcomeString = this.readFile(cs);
+            System.out.println(welcomeString);
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private boolean analyzeInput(String input) throws InvalidInputException {
+        if (input.equals("yes")) {
+            return true;
+        } else if (input.equals("no")) {
+            return false;
+        } else {
+            throw new InvalidInputException("Invalid response. Do you consent to have your decisions saved to a file? (yes/no)");
+        }
+    }
+
+    private void handleSavingDecision() {
+        String input;
+        System.out.println("\nDo you consent to have your decisions saved to a file? (yes/no)");
+        do {
+            input = this.scanner.nextLine();
+            try { this.saveUserResult = this.analyzeInput(input); }
+            catch (InvalidInputException e) { System.out.println(e.getMessage()); }
+        } while (!(input.equals("yes") || input.equals("no")));
+    }
+
+    private void handleContinueDecision() {
+        String input;
+        System.out.println("Would you like to continue? (yes/no)");
+        do {
+            input = this.scanner.nextLine();
+            if (input.equals("yes")) {
+
+            } else {
+                // TODO: Handle inputs are not yes or no
+            }
+        } while (!(input.equals("yes") || input.equals("no")));
     }
 
     private void handleInteractive(String[] args) {
         if (args.length == 1) {
-            ScenarioGenerator generator = new ScenarioGenerator();
+            this.validArguments = true;
+            this.printInteractiveWelcome();
+            this.handleSavingDecision();
+            Audit audit = new Audit();
+            audit.setAuditType("User");
+            int numScenarios = new Random().nextInt(10);
+            audit.scanner = this.scanner;
+            audit.run(3);
+            this.handleContinueDecision();
+        } else if (args.length == 3
+                && (args[1].equals("--config") || args[1].equals("-c"))) {
+            this.validArguments = true;
+            this.printInteractiveWelcome();
+            this.handleSavingDecision();
+            try {
+                Scenario[] scenarios = this.readConfigFile(args[2]);
+                for (Scenario scenario : scenarios){ System.out.println(scenario.toString()); }
+            } catch (IOException e) {
+                System.out.println("ERROR: could not find config file.");
+                System.exit(-1);
+            }
         }
     }
 
     public static void main(String[] args) {
         EthicalEngine ethicalEngine = new EthicalEngine();
-        Audit audit= new Audit();
         if (args.length > 0){
             String option = args[0];
             switch (option) {
