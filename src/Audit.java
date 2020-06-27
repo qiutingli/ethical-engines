@@ -20,7 +20,7 @@ public class Audit {
     private Map<String, ArrayList<Integer>> statsDict = new HashMap<>();
     private int totalPeople = 0;
     private int totalAge = 0;
-    public String resultPath;
+    public String resultPath = "logs/results.log";
     public EthicalEngine.Decision userDecision;
     public Scanner scanner;
     public boolean saveUserDecision;
@@ -215,6 +215,7 @@ public class Audit {
             case "pedestrians":
             case "2":
                 this.userDecision = EthicalEngine.Decision.PEDESTRIANS;
+            // TODO: Handle invalid input
         }
     }
 
@@ -254,7 +255,7 @@ public class Audit {
                 EthicalEngine.Decision decision = this.engine.decide(scenario);
                 updateStats(scenario, decision);
             }
-            this.printToFile(Objects.requireNonNullElse(this.resultPath, "logs/results.log"));
+            this.printToFile(this.resultPath);
         }
     }
 
