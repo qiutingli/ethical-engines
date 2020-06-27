@@ -45,7 +45,7 @@ public class ScenarioGenerator {
     }
 
     public Person getRandomPerson(){
-        int age = this.random.nextInt(100);
+        int age = this.random.nextInt(100);  // TODO: Check random age upper bound
         Character.Gender[] genderValues = Character.Gender.values();
         Character.Gender gender = genderValues[this.random.nextInt(genderValues.length)];
         Character.BodyType[] bodyTypeValues = Character.BodyType.values();
@@ -90,7 +90,25 @@ public class ScenarioGenerator {
         return characters;
     }
 
+    public void setCharacterNumbers(){
+        // TODO: Check random character upper bound
+        int passMax = this.random.nextInt(5) + 1; // To avoid the number equals to zero
+        int passMin = this.random.nextInt(passMax) + 1;
+        int pedesMax = this.random.nextInt(5) + 1;
+        int pedesMin = this.random.nextInt(pedesMax) + 1;
+        this.setPassengerCountMax(passMax);
+        this.setPassengerCountMin(passMin);
+        this.setPedestrianCountMax(pedesMax);
+        this.setPedestrianCountMin(pedesMin);
+    }
+
     public Scenario generate(){
+        if (this.passengerCountMinimum == 0 ||
+                this.passengerCountMaximum == 0 ||
+                this.pedestrianCountMinimum == 0 ||
+                this.pedestrianCountMaximum == 0) {
+            this.setCharacterNumbers();
+        }
         int numPassengers = getRandNumWithinRange(this.passengerCountMinimum, this.passengerCountMaximum);
         int numPedestrians = getRandNumWithinRange(this.pedestrianCountMinimum, this.pedestrianCountMaximum);
         Character[] passengers = generateCharacters(numPassengers);
