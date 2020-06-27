@@ -154,9 +154,8 @@ public class Audit {
     }
 
     public String generateStatistic(){
-        StringBuilder summaryStringBuilder = new StringBuilder(
-                "======================================\n" +
-                "# Audit\n" +
+        StringBuilder summaryStringBuilder = new StringBuilder("======================================\n" +
+                "# " + this.auditType + " Audit\n" +
                 "======================================\n" +
                 "- % SAVED AFTER ").append(this.runs).append(" RUNS\n");
         HashMap<String, Double> descendOrderedStats = generateDescendOrderedStats();
@@ -209,11 +208,12 @@ public class Audit {
             case "passengers":
             case "1":
                 this.userDecision = EthicalEngine.Decision.PASSENGERS;
+                break;
             case "pedestrian":
             case "pedestrians":
             case "2":
                 this.userDecision = EthicalEngine.Decision.PEDESTRIANS;
-            // TODO: Handle invalid input
+                break;
         }
     }
 
@@ -241,19 +241,19 @@ public class Audit {
     }
 
     public void run(){
-        this.runs = this.scenarios.length;
         int runsAcc = 0;
         if (this.auditType.equals("User")) {
-            for (int i = 0; i < this.runs; i++) {
+            for (Scenario value : this.scenarios) {
                 if (runsAcc == 3) {
+                    this.runs += runsAcc;
+                    this.printStatistic();
                     System.out.println("Would you like to continue? (yes/no)");
                     String input = this.scanner.nextLine();
-                    this.printStatistic();
                     if (input.equals("no")) break;
                     runsAcc = 0;
                 }
                 runsAcc++;
-                Scenario scenario = this.scenarios[i];
+                Scenario scenario = value;
                 System.out.println(scenario);
                 System.out.println("Who should be saved? (passenger(s) [1] or pedestrian(s) [2])");
                 this.handleUserDecisionInput();
