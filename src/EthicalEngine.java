@@ -60,8 +60,8 @@ public class EthicalEngine {
         return null;
     }
 
-    private Character.Gender getGender(String genderString) throws InvalidCharacteristicException {
-        switch (genderString) {
+    private Character.Gender getGender(String gender) throws InvalidCharacteristicException {
+        switch (gender) {
             case "male":
                 return Character.Gender.MALE;
             case "female":
@@ -69,12 +69,13 @@ public class EthicalEngine {
             case "unknown":
                 return Character.Gender.UNKNOWN;
             default:
+                System.out.println("gender: " + gender);
                 throw new InvalidCharacteristicException();
         }
     }
 
-    private Character.BodyType getBodyType(String bodyTypeString) throws InvalidCharacteristicException {
-        switch (bodyTypeString) {
+    private Character.BodyType getBodyType(String bodyType) throws InvalidCharacteristicException {
+        switch (bodyType) {
             case "average":
                 return Character.BodyType.AVERAGE;
             case "athletic":
@@ -82,6 +83,7 @@ public class EthicalEngine {
             case "overweight":
                 return Character.BodyType.OVERWEIGHT;
             default:
+                System.out.println("bodyType: " + bodyType);
                 throw new InvalidCharacteristicException();
         }
     }
@@ -100,9 +102,11 @@ public class EthicalEngine {
                 return Person.Profession.UNEMPLOYED;
             case "unknown":
                 return Person.Profession.UNKNOWN;
+            case "none":
             case "":
                 return Person.Profession.NONE;
             default:
+                System.out.println("profession: " + profession);
                 throw new InvalidCharacteristicException();
         }
     }
@@ -233,11 +237,11 @@ public class EthicalEngine {
 
     private void handleResults(String[] args) {
         this.validArguments = true;
-        String path = args[1];
+//        String path = args[1];
     }
 
     private String readFile(Charset encoding) throws IOException {
-        byte[] encoded = Files.readAllBytes(Paths.get("SupplementaryFiles/welcome.ascii"));
+        byte[] encoded = Files.readAllBytes(Paths.get("welcome.ascii"));
         return new String(encoded, encoding);
     }
 
@@ -261,7 +265,7 @@ public class EthicalEngine {
 
     private void handleSavingDecision() {
         String input;
-        System.out.println("\nDo you consent to have your decisions saved to a file? (yes/no)");
+        System.out.println("Do you consent to have your decisions saved to a file? (yes/no)");
         do {
             input = this.scanner.nextLine();
             try { this.saveUserResult = this.analyzeSavingInput(input); }
@@ -286,7 +290,6 @@ public class EthicalEngine {
             input = this.scanner.nextLine();
             try { this.userContinue = this.analyzeContinueInput(input); }
             catch (InvalidInputException e) { System.out.println(e.getMessage()); }
-
         } while (!(input.equals("yes") || input.equals("no")));
     }
 
@@ -327,6 +330,7 @@ public class EthicalEngine {
     }
 
     public static void main(String[] args) {
+//        for (String arg : args) System.out.println(arg);
         EthicalEngine ethicalEngine = new EthicalEngine();
         if (args.length > 0){
             String option = args[0];
