@@ -12,6 +12,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class EthicalEngine {
+    private ArrayList<Scenario> scenarios = new ArrayList<>();
     // The following variables are used for readConfigFile. Note EthicalEngine does not have a constructor.
     private Scenario scenario;
     private boolean isLegalCrossing = false;
@@ -52,27 +53,25 @@ public class EthicalEngine {
         return null;
     }
 
-    private Character.Gender getGender(String gender){
+    private Character.Gender getGender(String gender) throws InvalidCharacteristicException {
         return switch (gender) {
             case "male" -> Character.Gender.MALE;
             case "female" -> Character.Gender.FEMALE;
             case "unknown" -> Character.Gender.UNKNOWN;
-            // TODO: Handle invalid gender input
-            default -> null;
+            default -> throw new InvalidCharacteristicException();
         };
     }
 
-    private Character.BodyType getBodyType(String bodyType){
+    private Character.BodyType getBodyType(String bodyType) throws InvalidCharacteristicException {
         return switch (bodyType) {
             case "average" -> Character.BodyType.AVERAGE;
             case "athletic" -> Character.BodyType.ATHLETIC;
             case "overweight" -> Character.BodyType.OVERWEIGHT;
-            // TODO: Handle invalid bodyType input
-            default -> null;
+            default -> throw new InvalidCharacteristicException();
         };
     }
 
-    private Person.Profession getProfession(String profession){
+    private Person.Profession getProfession(String profession) throws InvalidCharacteristicException {
         return switch (profession) {
             case "doctor" -> Person.Profession.DOCTOR;
             case "ceo" -> Person.Profession.CEO;
@@ -80,19 +79,21 @@ public class EthicalEngine {
             case "homeless" -> Person.Profession.HOMELESS;
             case "unemployed" -> Person.Profession.UNEMPLOYED;
             case "unknown" -> Person.Profession.UNKNOWN;
-            case "none" -> Person.Profession.NONE;
-            // TODO: Handle invalid bodyType input
-            default -> null;
+            case "" -> Person.Profession.NONE;
+            default -> throw new InvalidCharacteristicException();
         };
     }
 
-    private Character generateCharacter(String[] characterAttributes){
+    private Character generateCharacter(String[] characterAttributes) throws NumberFormatException, InvalidCharacteristicException {
         Character character;
         if (characterAttributes[0].equals("person")){
             character = new Person();
             character.setGender(this.getGender(characterAttributes[1]));
-            // TODO: Handle invalid age
-            character.setAge(Integer.parseInt(characterAttributes[2]));
+            try {
+                character.setAge(Integer.parseInt(characterAttributes[2]));
+            } catch (Exception e) {
+                throw new NumberFormatException();
+            }
             character.setBodyType(this.getBodyType(characterAttributes[3]));
             ((Person) character).setProfession(this.getProfession(characterAttributes[4]));
             ((Person) character).setPregnant(Boolean.parseBoolean(characterAttributes[5]));
@@ -102,15 +103,15 @@ public class EthicalEngine {
             boolean isPet = Boolean.parseBoolean(characterAttributes[8]); // false if it is null
             ((Animal) character).setPet(isPet);
         } else {
-            // TODO: Invalid input
-            return null;
+            System.out.println(String.join(",", characterAttributes));
+            throw new InvalidCharacteristicException();
         }
         return character;
     }
 
     private void saveScenario(Scenario scenario){
         if (scenario != null){
-            // TODO: Save scenario
+            this.scenarios.add(scenario);
             System.out.println(scenario.toString());
         }
     }
@@ -134,12 +135,24 @@ public class EthicalEngine {
         }
     }
 
-    private void handleScenarioCharacters(String[] characterAttributes){
-        Character character = generateCharacter(characterAttributes);
-        if (characterAttributes[9].equals("passenger")) this.passengers.add(character);
-        else if (characterAttributes[9].equals("pedestrian")) this.pedestrians.add(character);
-        else if (String.join(",", characterAttributes).equals("class,gender,age,bodyType,profession,pregnant,isYou,species,isPet,role"));
-        else System.out.println("Invalid character line: " + String.join(",", characterAttributes));
+    private void handleScenarioCharacters(String[] characterAttributes) throws InvalidCharacteristicException {
+        if (!String.join(",", characterAttributes)
+                .equals("class,gender,age,bodyType,profession,pregnant,isYou,species,isPet,role")){
+            Character character = generateCharacter(characterAttributes);
+            if (characterAttributes[9].equals("passenger")) this.passengers.add(character);
+            else if (characterAttributes[9].equals("pedestrian")) this.pedestrians.add(character);
+            else throw new InvalidCharacteristicException();
+        }
+    }
+
+    private void handleExceptions(Exception e, int lineCount){
+        if (e instanceof InvalidDataFormatException)
+            System.out.println("WARNING: invalid data format in config file in line " + lineCount);
+        else if (e instanceof NumberFormatException)
+            System.out.println("WARNING: invalid number format in config file in line " + lineCount);
+        else if (e instanceof InvalidCharacteristicException)
+            System.out.println("WARNING: invalid characteristic in config file in line " + lineCount);
+        else e.printStackTrace();
     }
 
     protected void readConfigFile(String pathToCsv) throws IOException {
@@ -147,11 +160,17 @@ public class EthicalEngine {
         if (csvFile.isFile()) {
             try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
                 String csvLine;
+                int lineCount = 1;
                 while ((csvLine = br.readLine()) != null) {
-                    String[] characterAttributes = csvLine.split(",");
-                    if (characterAttributes.length == 1) handleScenarioBreaks(characterAttributes);
-                    else if (characterAttributes.length == 10) handleScenarioCharacters(characterAttributes);
-                    else System.out.println("Invalid csv line: "  + csvLine);
+                    try {
+                        String[] characterAttributes = csvLine.split(",");
+                        if (characterAttributes.length == 1) handleScenarioBreaks(characterAttributes);
+                        else if (characterAttributes.length == 10) handleScenarioCharacters(characterAttributes);
+                        else throw new InvalidDataFormatException();
+                    } catch (Exception e) {
+                        handleExceptions(e, lineCount);
+                    }
+                    lineCount++;
                 }
                 if (this.passengers.size() > 0 && this.pedestrians.size() > 0){
                     // Handle the last scenario
