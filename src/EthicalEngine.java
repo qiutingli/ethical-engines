@@ -60,35 +60,51 @@ public class EthicalEngine {
         return null;
     }
 
-    private Character.Gender getGender(String gender) throws InvalidCharacteristicException {
-        return switch (gender) {
-            case "male" -> Character.Gender.MALE;
-            case "female" -> Character.Gender.FEMALE;
-            case "unknown" -> Character.Gender.UNKNOWN;
-            default -> throw new InvalidCharacteristicException();
-        };
+    private Character.Gender getGender(String genderString) throws InvalidCharacteristicException {
+        switch (genderString) {
+            case "male":
+                return Character.Gender.MALE;
+            case "female":
+                return Character.Gender.FEMALE;
+            case "unknown":
+                return Character.Gender.UNKNOWN;
+            default:
+                throw new InvalidCharacteristicException();
+        }
     }
 
-    private Character.BodyType getBodyType(String bodyType) throws InvalidCharacteristicException {
-        return switch (bodyType) {
-            case "average" -> Character.BodyType.AVERAGE;
-            case "athletic" -> Character.BodyType.ATHLETIC;
-            case "overweight" -> Character.BodyType.OVERWEIGHT;
-            default -> throw new InvalidCharacteristicException();
-        };
+    private Character.BodyType getBodyType(String bodyTypeString) throws InvalidCharacteristicException {
+        switch (bodyTypeString) {
+            case "average":
+                return Character.BodyType.AVERAGE;
+            case "athletic":
+                return Character.BodyType.ATHLETIC;
+            case "overweight":
+                return Character.BodyType.OVERWEIGHT;
+            default:
+                throw new InvalidCharacteristicException();
+        }
     }
 
     private Person.Profession getProfession(String profession) throws InvalidCharacteristicException {
-        return switch (profession) {
-            case "doctor" -> Person.Profession.DOCTOR;
-            case "ceo" -> Person.Profession.CEO;
-            case "criminal" -> Person.Profession.CRIMINAL;
-            case "homeless" -> Person.Profession.HOMELESS;
-            case "unemployed" -> Person.Profession.UNEMPLOYED;
-            case "unknown" -> Person.Profession.UNKNOWN;
-            case "" -> Person.Profession.NONE;
-            default -> throw new InvalidCharacteristicException();
-        };
+        switch (profession) {
+            case "doctor":
+                return Person.Profession.DOCTOR;
+            case "ceo":
+                return Person.Profession.CEO;
+            case "criminal":
+                return Person.Profession.CRIMINAL;
+            case "homeless":
+                return Person.Profession.HOMELESS;
+            case "unemployed":
+                return Person.Profession.UNEMPLOYED;
+            case "unknown":
+                return Person.Profession.UNKNOWN;
+            case "":
+                return Person.Profession.NONE;
+            default:
+                throw new InvalidCharacteristicException();
+        }
     }
 
     private Character generateCharacter(String[] characterAttributes) throws NumberFormatException, InvalidCharacteristicException {
@@ -304,10 +320,18 @@ public class EthicalEngine {
         if (args.length > 0){
             String option = args[0];
             switch (option) {
-                case "--config", "-c" -> ethicalEngine.handleControl(args);
-                case "--help", "-h" -> ethicalEngine.handleHelp();
-                case "--results", "-r" -> ethicalEngine.handleResults(args);
-                case "--interactive", "-i" -> ethicalEngine.handleInteractive(args);
+                case "--config":
+                case "-c":
+                    ethicalEngine.handleControl(args);
+                case "--help":
+                case "-h":
+                    ethicalEngine.handleHelp();
+                case "--results":
+                case "-r":
+                    ethicalEngine.handleResults(args);
+                case "--interactive":
+                case "-i":
+                    ethicalEngine.handleInteractive(args);
             }
         }
         if (!ethicalEngine.validArguments) System.out.println("ERROR: Invalid command arguments.");

@@ -204,6 +204,20 @@ public class Audit {
         }
     }
 
+    private void handleUserDecisionInput(){
+        String input = this.scanner.nextLine();
+        switch (input) {
+            case "passenger":
+            case "passengers":
+            case "1":
+                this.userDecision = EthicalEngine.Decision.PASSENGERS;
+            case "pedestrian":
+            case "pedestrians":
+            case "2":
+                this.userDecision = EthicalEngine.Decision.PEDESTRIANS;
+        }
+    }
+
     public void run(int runs){
         this.runs += runs;
         if (this.auditType.equals("User")) {
@@ -211,11 +225,7 @@ public class Audit {
                 Scenario scenario = this.generator.generate();
                 System.out.println(scenario);
                 System.out.println("\nWho should be saved? (passenger(s) [1] or pedestrian(s) [2])");
-                String input = this.scanner.nextLine();
-                switch (input) {
-                    case "passenger", "passengers", "1" -> this.userDecision = EthicalEngine.Decision.PASSENGERS;
-                    case "pedestrian", "pedestrians", "2" -> this.userDecision = EthicalEngine.Decision.PEDESTRIANS;
-                }
+                handleUserDecisionInput();
                 updateStats(scenario, this.userDecision);
             }
             if (this.saveUserDecision) { this.printToFile("logs/user.log"); }
@@ -235,11 +245,7 @@ public class Audit {
             for (Scenario scenario : this.scenarios) {
                 System.out.println(scenario);
                 System.out.println("\nWho should be saved? (passenger(s) [1] or pedestrian(s) [2])");
-                String input = this.scanner.nextLine();
-                switch (input) {
-                    case "passenger", "passengers", "1" -> this.userDecision = EthicalEngine.Decision.PASSENGERS;
-                    case "pedestrian", "pedestrians", "2" -> this.userDecision = EthicalEngine.Decision.PEDESTRIANS;
-                }
+                this.handleUserDecisionInput();
                 updateStats(scenario, this.userDecision);
             }
             if (this.saveUserDecision) { this.printToFile("logs/user.log"); }
