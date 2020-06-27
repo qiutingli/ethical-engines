@@ -1,0 +1,312 @@
+WARNING: invalid data format in config file in line 3
+WARNING: invalid data format in config file in line 22
+                   __-------__
+                 / _---------_ \
+                / /           \ \
+                | |           | |
+                |_|___________|_|
+            /-\|                 |/-\
+           | _ |\       0       /| _ |
+           |(_)| \      !      / |(_)|
+           |___|__\_____!_____/__|___|
+           [_______|COMP90041|_______] 
+            ||||    ~~~~~~~~~    ||||
+            `--'                 `--'
+
+    $$\      $$\                              $$\                                
+    $$$\    $$$ |                             $$ |                               
+    $$$$\  $$$$ | $$$$$$\   $$$$$$\  $$$$$$\  $$ |                               
+    $$\$$\$$ $$ |$$  __$$\ $$  __$$\ \____$$\ $$ |                               
+    $$ \$$$  $$ |$$ /  $$ |$$ |  \__|$$$$$$$ |$$ |                               
+    $$ |\$  /$$ |$$ |  $$ |$$ |     $$  __$$ |$$ |                               
+    $$ | \_/ $$ |\$$$$$$  |$$ |     \$$$$$$$ |$$ |                               
+    \__|     \__| \______/ \__|      \_______|\__|                               
+    $$\      $$\                     $$\       $$\                               
+    $$$\    $$$ |                    $$ |      \__|                              
+    $$$$\  $$$$ | $$$$$$\   $$$$$$$\ $$$$$$$\  $$\ $$$$$$$\   $$$$$$\   $$$$$$$\ 
+    $$\$$\$$ $$ | \____$$\ $$  _____|$$  __$$\ $$ |$$  __$$\ $$  __$$\ $$  _____|
+    $$ \$$$  $$ | $$$$$$$ |$$ /      $$ |  $$ |$$ |$$ |  $$ |$$$$$$$$ |\$$$$$$\  
+    $$ |\$  /$$ |$$  __$$ |$$ |      $$ |  $$ |$$ |$$ |  $$ |$$   ____| \____$$\ 
+    $$ | \_/ $$ |\$$$$$$$ |\$$$$$$$\ $$ |  $$ |$$ |$$ |  $$ |\$$$$$$$\ $$$$$$$  |
+    \__|     \__| \_______| \_______|\__|  \__|\__|\__|  \__| \_______|\_______/ 
+
+
+Welcome to Moral Machines! 
+    
+The idea of Moral Machines is based on the Trolley Dilemma, a fictional scenario presenting a decision maker with a moral dilemma: choosing ”the lesser of two evils”. The scenario entails an autonomous car whose brakes fail at a pedestrian crossing. As it is too late to relinquish control to the car’s passengers, the car needs to make a decision. Now.
+
+The answers are not straightforward. There are a number of variables at play, which influence how people may feel about the decision: the number of pedestrians or passengers, whether the pedestrians are crossing the street legally, and personal characteristics that our automomous car can somehow infer (people's body tye, profession, gender, age, etc.). This program is a thought experiment, which explores how decisions should be made by auditing algorithms and collecting user feedback. You, the user of this program, will be put into (im)possible situations, left to decide about life and death.
+Do you consent to have your decisions saved to a file? (yes/no)
+======================================
+# Scenario
+======================================
+Legal Crossing: yes
+Passengers (1)
+- average child male
+Pedestrians (5)
+- average adult unknown female pregnant
+- overweight adult ceo male
+- athletic adult unemployed female pregnant
+- average senior female
+- athletic adult criminal male
+Who should be saved? (passenger(s) [1] or pedestrian(s) [2])
+======================================
+# Scenario
+======================================
+Legal Crossing: no
+Passengers (1)
+- overweight adult doctor male
+Pedestrians (6)
+- you overweight adult homeless female pregnant
+- athletic child female
+- overweight baby male
+- overweight senior male
+- overweight adult ceo female pregnant
+- dog is pet
+Who should be saved? (passenger(s) [1] or pedestrian(s) [2])
+======================================
+# Scenario
+======================================
+Legal Crossing: yes
+Passengers (4)
+- you overweight senior male
+- overweight adult doctor female pregnant
+- average adult homeless female pregnant
+- ferret is pet
+Pedestrians (6)
+- dog is pet
+- cat is pet
+- athletic child male
+- average adult criminal female pregnant
+- athletic adult homeless female pregnant
+- overweight adult unknown female
+Who should be saved? (passenger(s) [1] or pedestrian(s) [2])
+======================================
+# User Audit
+======================================
+- % SAVED AFTER 3 RUNS
+cat: 1.0
+child: 0.6
+animal: 0.5
+criminal: 0.5
+doctor: 0.5
+dog: 0.5
+pet: 0.5
+unknown: 0.5
+athletic: 0.4
+average: 0.4
+green: 0.4
+adult: 0.3
+homeless: 0.3
+male: 0.3
+person: 0.3
+female: 0.2
+overweight: 0.2
+pregnant: 0.2
+red: 0.1
+baby: 0.0
+ceo: 0.0
+ferret: 0.0
+senior: 0.0
+unemployed: 0.0
+you: 0.0
+--
+average age: 41.0
+Would you like to continue? (yes/no)
+======================================
+# Scenario
+======================================
+Legal Crossing: no
+Passengers (1)
+- average senior male
+Pedestrians (3)
+- athletic adult doctor female pregnant
+- ferret is pet
+- athletic senior male
+Who should be saved? (passenger(s) [1] or pedestrian(s) [2])
+======================================
+# Scenario
+======================================
+Legal Crossing: no
+Passengers (5)
+- ferret
+- athletic child male
+- overweight adult ceo female
+- average adult doctor female
+- average child female
+Pedestrians (4)
+- ferret
+- you athletic adult unknown male
+- athletic child male
+- average senior male
+Who should be saved? (passenger(s) [1] or pedestrian(s) [2])
+======================================
+# Scenario
+======================================
+Legal Crossing: yes
+Passengers (1)
+- overweight senior female
+Pedestrians (4)
+- average baby female
+- average adult ceo female
+- athletic senior male
+- average senior male
+Who should be saved? (passenger(s) [1] or pedestrian(s) [2])
+======================================
+# User Audit
+======================================
+- % SAVED AFTER 6 RUNS
+cat: 1.0
+doctor: 0.7
+child: 0.6
+pet: 0.6
+animal: 0.5
+athletic: 0.5
+average: 0.5
+baby: 0.5
+ceo: 0.5
+criminal: 0.5
+dog: 0.5
+female: 0.5
+ferret: 0.5
+green: 0.5
+adult: 0.4
+male: 0.4
+person: 0.4
+red: 0.4
+homeless: 0.3
+pregnant: 0.3
+senior: 0.3
+unknown: 0.3
+overweight: 0.2
+unemployed: 0.0
+you: 0.0
+--
+average age: 43.8
+Would you like to continue? (yes/no)
+======================================
+# Scenario
+======================================
+Legal Crossing: no
+Passengers (2)
+- overweight adult unemployed female pregnant
+- overweight adult unknown male
+Pedestrians (7)
+- dog
+- average adult criminal female pregnant
+- average adult criminal male
+- athletic senior male
+- average senior female
+- overweight adult unknown female pregnant
+- average adult unemployed male
+Who should be saved? (passenger(s) [1] or pedestrian(s) [2])
+======================================
+# Scenario
+======================================
+Legal Crossing: no
+Passengers (7)
+- overweight adult ceo male
+- ferret is pet
+- average senior male
+- average adult doctor female pregnant
+- dog
+- athletic adult ceo female pregnant
+- average adult homeless female
+Pedestrians (4)
+- ferret is pet
+- dog is pet
+- athletic adult unemployed female
+- dog
+Who should be saved? (passenger(s) [1] or pedestrian(s) [2])
+======================================
+# Scenario
+======================================
+Legal Crossing: no
+Passengers (3)
+- cat is pet
+- ferret is pet
+- athletic senior male
+Pedestrians (4)
+- overweight adult unknown female
+- average child male
+- athletic senior male
+- average adult ceo male
+Who should be saved? (passenger(s) [1] or pedestrian(s) [2])
+======================================
+# User Audit
+======================================
+- % SAVED AFTER 9 RUNS
+cat: 1.0
+criminal: 0.7
+pet: 0.7
+animal: 0.6
+doctor: 0.6
+dog: 0.6
+athletic: 0.5
+average: 0.5
+baby: 0.5
+child: 0.5
+ferret: 0.5
+green: 0.5
+unemployed: 0.5
+adult: 0.4
+female: 0.4
+male: 0.4
+person: 0.4
+red: 0.4
+senior: 0.4
+pregnant: 0.3
+unknown: 0.3
+ceo: 0.2
+homeless: 0.2
+overweight: 0.2
+you: 0.0
+--
+average age: 47.7
+Would you like to continue? (yes/no)
+======================================
+# Scenario
+======================================
+Legal Crossing: yes
+Passengers (3)
+- dog
+- cat is pet
+- overweight adult ceo female
+Pedestrians (4)
+- dog is pet
+- overweight senior female
+- average senior female
+- athletic adult doctor female pregnant
+Who should be saved? (passenger(s) [1] or pedestrian(s) [2])
+======================================
+# User Audit
+======================================
+- % SAVED AFTER 10 RUNS
+cat: 1.0
+criminal: 0.7
+animal: 0.6
+dog: 0.6
+pet: 0.6
+athletic: 0.5
+average: 0.5
+baby: 0.5
+child: 0.5
+doctor: 0.5
+ferret: 0.5
+green: 0.5
+unemployed: 0.5
+adult: 0.4
+female: 0.4
+male: 0.4
+person: 0.4
+red: 0.4
+ceo: 0.3
+pregnant: 0.3
+senior: 0.3
+unknown: 0.3
+homeless: 0.2
+overweight: 0.2
+you: 0.0
+--
+average age: 47.8
+That's all. Press Enter to quit.
