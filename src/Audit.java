@@ -145,16 +145,15 @@ public class Audit {
             ArrayList<Integer> survivalAndTotal = entry.getValue();
             survivalStats.put(characteristic, (double) survivalAndTotal.get(0)/survivalAndTotal.get(1));
         }
-        survivalStats = survivalStats
+        // Apply alphabet order and then descending order
+        Map<String, Double> sortedStats = new TreeMap<>(survivalStats);
+        sortedStats = sortedStats
                 .entrySet()
                 .stream()
                 .sorted(Collections.reverseOrder(Map.Entry.<String, Double>comparingByValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue,
                         LinkedHashMap::new));
         //      .forEach(System.out::println)
-        System.out.println();
-        // Apply alphabet order and then descending order
-        Map<String, Double> sortedStats = new TreeMap<>(survivalStats);
         return sortedStats;
     }
 
@@ -182,7 +181,7 @@ public class Audit {
     }
 
     public void printStatistic(){
-        System.out.println(this.toString());
+        System.out.print(this.toString());
     }
 
     public void printToFile(String filepath){
