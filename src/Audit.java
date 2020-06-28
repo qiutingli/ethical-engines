@@ -171,7 +171,7 @@ public class Audit {
         }
         String averageAge = ((double) this.totalAge/this.totalPeople + "");
         averageAge = averageAge.substring(0, averageAge.indexOf(".")+2);
-        summaryStringBuilder.append("--\n" + "average age: ").append(averageAge);
+        summaryStringBuilder.append("--\n" + "average age: ").append(averageAge).append("\n");
         return summaryStringBuilder.toString();
     }
 
