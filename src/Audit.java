@@ -82,17 +82,21 @@ public class Audit {
         if (character instanceof Person){
             this.totalPeople += 1;
             this.totalAge += character.getAge();
+            String gender = character.getGender().toString().toLowerCase();
+            String bodyType = character.getBodyType().toString().toLowerCase();
             String ageCategory = ((Person) character).getAgeCategory().toString().toLowerCase();
-            String gender = ((Person) character).getGender().toString().toLowerCase();
-            String bodyType = ((Person) character).getBodyType().toString().toLowerCase();
             String profession = ((Person) character).getProfession().toString().toLowerCase();
             String classType = "person";
-            String[] characteristics = {ageCategory, gender, bodyType, profession, classType};
+            String[] characteristics = {ageCategory, gender, bodyType, classType};
             for (String characteristic : characteristics){
                 this.updateOneKeyVal(characteristic, survived);
             }
-            if (((Person) character).isPregnant()){ this.updateOneKeyVal("pregnant", survived); }
+            if (((Person) character).getAgeCategory() == Person.AgeCategory.ADULT) {
+                this.updateOneKeyVal(profession, survived);
+            }
+            if (((Person) character).isPregnant()) { this.updateOneKeyVal("pregnant", survived); }
         } else {
+            this.updateOneKeyVal("animal", survived);
             String species = ((Animal) character).getSpecies();
             this.updateOneKeyVal(species, survived);
             if (((Animal) character).isPet()){
@@ -118,10 +122,10 @@ public class Audit {
         // Handle traffic lights
         if (scenario.isLegalCrossing()){
             boolean survived = decision == EthicalEngine.Decision.PEDESTRIANS;
-            this.updateOneKeyVal("green", survived);
+            this.updateOneKeyVal("red", survived);
         } else {
             boolean survived = decision == EthicalEngine.Decision.PASSENGERS;
-            this.updateOneKeyVal("red", survived);
+            this.updateOneKeyVal("green", survived);
         }
     }
 
