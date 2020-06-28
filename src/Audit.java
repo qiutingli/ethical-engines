@@ -122,10 +122,10 @@ public class Audit {
         // Handle traffic lights
         if (scenario.isLegalCrossing()){
             boolean survived = decision == EthicalEngine.Decision.PEDESTRIANS;
-            this.updateOneKeyVal("red", survived);
+            this.updateOneKeyVal("green", survived);
         } else {
             boolean survived = decision == EthicalEngine.Decision.PASSENGERS;
-            this.updateOneKeyVal("green", survived);
+            this.updateOneKeyVal("red", survived);
         }
     }
 
@@ -145,9 +145,7 @@ public class Audit {
             ArrayList<Integer> survivalAndTotal = entry.getValue();
             survivalStats.put(characteristic, (double) survivalAndTotal.get(0)/survivalAndTotal.get(1));
         }
-        // Apply alphabet order and then descending order
-        Map<String, Double> sortedStats = new TreeMap<>(survivalStats);
-        sortedStats = sortedStats
+        survivalStats = survivalStats
                 .entrySet()
                 .stream()
                 .sorted(Collections.reverseOrder(Map.Entry.<String, Double>comparingByValue()))
@@ -155,6 +153,8 @@ public class Audit {
                         LinkedHashMap::new));
         //      .forEach(System.out::println)
         System.out.println();
+        // Apply alphabet order and then descending order
+        Map<String, Double> sortedStats = new TreeMap<>(survivalStats);
         return sortedStats;
     }
 
@@ -251,14 +251,14 @@ public class Audit {
         if (this.auditType.equals("User")) {
             for (Scenario value : this.scenarios) {
                 if (runsAcc == 3) {
-                    this.runs += runsAcc;
+                    runsAcc = 0;
                     this.printStatistic();
                     System.out.println("Would you like to continue? (yes/no)");
                     String input = this.scanner.nextLine();
                     if (input.equals("no")) break;
-                    runsAcc = 0;
                 }
                 runsAcc++;
+                this.runs ++;
                 Scenario scenario = value;
                 System.out.println(scenario);
                 System.out.println("Who should be saved? (passenger(s) [1] or pedestrian(s) [2])");
