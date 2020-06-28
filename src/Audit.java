@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.Character;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -15,8 +16,8 @@ public class Audit {
     private int runs;
     private String auditType = "Unspecified";
     private Map<String, ArrayList<Integer>> statsDict = new HashMap<>();
-    private int totalPeople = 0;
-    private int totalAge = 0;
+    private int totalSurval = 0;
+    private int totalSurvivalAge = 0;
     public String resultPath = "logs/results.log";
     public EthicalEngine.Decision userDecision;
     public Scanner scanner;
@@ -80,8 +81,6 @@ public class Audit {
         • legality (red or green light)
          */
         if (character instanceof Person){
-            this.totalPeople += 1;
-            this.totalAge += character.getAge();
             String gender = character.getGender().toString().toLowerCase();
             String bodyType = character.getBodyType().toString().toLowerCase();
             String ageCategory = ((Person) character).getAgeCategory().toString().toLowerCase();
@@ -105,7 +104,14 @@ public class Audit {
         }
     }
 
-    private void updateStats(Scenario scenario, EthicalEngine.Decision decision){
+    private void updateSurvivalAgeStats(ethicalengine.Character character, boolean survived) {
+        if (survived && character instanceof Person) {
+            this.totalSurval += 1;
+            this.totalSurvivalAge += character.getAge();
+        }
+    }
+
+    private void updateStats(Scenario scenario, EthicalEngine.Decision decision) {
         /*
         Update the statistics for the given scenario
          */
@@ -113,20 +119,19 @@ public class Audit {
         for (ethicalengine.Character character : scenario.getPassengers()){
             boolean survived = decision == EthicalEngine.Decision.PASSENGERS;
             this.updateCharacterRelatedStats(character, survived);
+            this.updateSurvivalAgeStats(character, survived);
+            // Handle traffic lights
+            this.updateOneKeyVal(scenario.isLegalCrossing()? "green" : "red", survived);
         }
         // Handle Pedestrians
         for (ethicalengine.Character character : scenario.getPedestrians()){
             boolean survived = decision == EthicalEngine.Decision.PEDESTRIANS;
             this.updateCharacterRelatedStats(character, survived);
+            this.updateSurvivalAgeStats(character, survived);
+            // Handle traffic lights
+            this.updateOneKeyVal(scenario.isLegalCrossing()? "green" : "red", survived);
         }
-        // Handle traffic lights
-        if (scenario.isLegalCrossing()){
-            boolean survived = decision == EthicalEngine.Decision.PEDESTRIANS;
-            this.updateOneKeyVal("green", survived);
-        } else {
-            boolean survived = decision == EthicalEngine.Decision.PASSENGERS;
-            this.updateOneKeyVal("red", survived);
-        }
+
     }
 
     private String addCharactSurvRate(String characteristic, double rate){
@@ -135,7 +140,7 @@ public class Audit {
         return characteristic + ": " + truncatedRate + "\n";
     }
 
-    public Map<String, Double> generateDescendOrderedStats(){
+    public TreeSet<Map.Entry<String, Double>> generateDescendOrderedStats(){
         /*
         Produce stats in descending order
          */
@@ -145,15 +150,28 @@ public class Audit {
             ArrayList<Integer> survivalAndTotal = entry.getValue();
             survivalStats.put(characteristic, (double) survivalAndTotal.get(0)/survivalAndTotal.get(1));
         }
-        // Apply alphabet order and then descending order
-        Map<String, Double> sortedStats = new TreeMap<>(survivalStats);
-        sortedStats = sortedStats
-                .entrySet()
-                .stream()
-                .sorted(Collections.reverseOrder(Map.Entry.<String, Double>comparingByValue()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue,
-                        LinkedHashMap::new));
-        //      .forEach(System.out::println)
+        TreeSet<Map.Entry<String, Double>> sortedStats = new TreeSet(new Comparator<Map.Entry<String, Double>>(){
+            @Override
+            public int compare(Map.Entry<String, Double> me1, Map.Entry<String, Double> me2) {
+                int result = (me2.getValue()).compareTo( me1.getValue() );
+                if (result != 0) {
+                    return result;
+                } else {
+                    return me1.getKey().compareTo(me2.getKey());
+                }
+            }
+        });
+        sortedStats.addAll(survivalStats.entrySet());
+
+//        // Apply alphabet order and then descending order
+//        Map<String, Double> sortedStats = new TreeMap<>(survivalStats);
+//        sortedStats = sortedStats
+//                .entrySet()
+//                .stream()
+//                .sorted(Collections.reverseOrder(Map.Entry.<String, Double>comparingByValue()))
+//                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue,
+//                        LinkedHashMap::new));
+//        //      .forEach(System.out::println)
         return sortedStats;
     }
 
@@ -163,13 +181,13 @@ public class Audit {
                 "# " + this.auditType + " Audit\n" +
                 "======================================\n" +
                 "- % SAVED AFTER ").append(this.runs).append(" RUNS\n");
-        Map<String, Double> descendOrderedStats = generateDescendOrderedStats();
-        for (Map.Entry<String, Double> entry : descendOrderedStats.entrySet()) {
+        TreeSet<Map.Entry<String, Double>> descendOrderedStats = generateDescendOrderedStats();
+        for (Map.Entry<String, Double> entry : descendOrderedStats) {
             String characteristic = entry.getKey();
             double survivalAndTotal = entry.getValue();
             summaryStringBuilder.append(addCharactSurvRate(characteristic, survivalAndTotal));
         }
-        String averageAge = ((double) this.totalAge/this.totalPeople + "");
+        String averageAge = ((double) this.totalSurvivalAge / this.totalSurval + "");
         averageAge = averageAge.substring(0, averageAge.indexOf(".")+2);
         summaryStringBuilder.append("--\n" + "average age: ").append(averageAge).append("\n");
         return summaryStringBuilder.toString();

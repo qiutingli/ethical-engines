@@ -320,7 +320,7 @@ public class EthicalEngine {
                 Scenario[] scenarios = this.readConfigFile(args[2]);
                 Audit audit = this.getUserAudit(true, scenarios);
                 audit.run();
-                System.out.println("That’s all. Press Enter to quit.");
+                System.out.println("That's all. Press Enter to quit.");
                 if(scanner.nextLine().isEmpty()) System.exit(-1);
             } catch (IOException e) {
                 System.out.println("ERROR: could not find config file.");
