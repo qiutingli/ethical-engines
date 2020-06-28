@@ -17,12 +17,12 @@ public class Person extends Character
         this.profession = this.getAgeCategory() == AgeCategory.ADULT? Profession.UNKNOWN : Profession.NONE;
     }
 
-    public Person(int age, Gender gender, BodyType bodytype) {
-        super(age, gender, bodytype);
+    public Person(int age, Gender gender, BodyType bodyType) {
+        super(age, gender, bodyType);
     }
     
-    public Person(int age, Profession profession, Gender gender, BodyType bodytype, boolean isPregnant) {
-        super(age, gender, bodytype);
+    public Person(int age, Profession profession, Gender gender, BodyType bodyType, boolean isPregnant) {
+        super(age, gender, bodyType);
         this.profession = this.getAgeCategory() == AgeCategory.ADULT? profession : Profession.NONE;
         this.isPregnant = this.getGender() == Gender.FEMALE && isPregnant;
     }
