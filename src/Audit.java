@@ -4,9 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.Character;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Audit {
     private final ScenarioGenerator generator = new ScenarioGenerator();
@@ -23,7 +21,9 @@ public class Audit {
     public Scanner scanner;
     public boolean saveUserDecision;
 
-    public Audit() { }
+    public Audit() {
+
+    }
 
     public Audit(Scenario[] scenarios) {
         this.scenarios = scenarios;
@@ -48,11 +48,12 @@ public class Audit {
         this.generator.setPedestrianCountMin(pedesMin);
     }
 
+    /**
+     * Update the statistics for one characteristic
+     * @param characteristic - characteristic in stats
+     * @param survived - indicates if the character is survived
+     */
     private void updateOneKeyVal(String characteristic, boolean survived){
-        /*
-        Update the characteristic statistics
-         */
-        // TODO: Exclude default keys like none, add keys like animal.
         ArrayList<Integer> survivalAndTotal;
         int survivalIncrease = survived? 1:0;
         survivalAndTotal = new ArrayList<>(Arrays.asList(survivalIncrease, 1));
@@ -67,19 +68,12 @@ public class Audit {
         }
     }
 
+    /**
+     * Update the all characteristic statistics related to the character
+     * @param character - character
+     * @param survived - indicates if the character is survived
+     */
     private void updateCharacterRelatedStats(ethicalengine.Character character, boolean survived){
-        /*
-        Update the all characteristic statistics related to the character
-        • age category
-        • gender
-        • body type
-        • profession
-        • pregnant
-        • class type (person or animal)
-        • species
-        • pets
-        • legality (red or green light)
-         */
         if (character instanceof Person){
             String gender = character.getGender().toString().toLowerCase();
             String bodyType = character.getBodyType().toString().toLowerCase();
@@ -94,6 +88,7 @@ public class Audit {
                 this.updateOneKeyVal(profession, survived);
             }
             if (((Person) character).isPregnant()) { this.updateOneKeyVal("pregnant", survived); }
+            if (((Person) character).isYou) { this.updateOneKeyVal("you", survived); }
         } else {
             this.updateOneKeyVal("animal", survived);
             String species = ((Animal) character).getSpecies();
@@ -104,6 +99,11 @@ public class Audit {
         }
     }
 
+    /**
+     * Update survival age statistics
+     * @param character - character
+     * @param survived - indicates if the character is survived
+     */
     private void updateSurvivalAgeStats(ethicalengine.Character character, boolean survived) {
         if (survived && character instanceof Person) {
             this.totalSurval += 1;
@@ -111,10 +111,12 @@ public class Audit {
         }
     }
 
+    /**
+     * Update the statistics with the given scenario and the decision
+     * @param scenario - scenario
+     * @param decision - decision on saving whic group of characters
+     */
     private void updateStats(Scenario scenario, EthicalEngine.Decision decision) {
-        /*
-        Update the statistics for the given scenario
-         */
         // Handle passengers
         for (ethicalengine.Character character : scenario.getPassengers()){
             boolean survived = decision == EthicalEngine.Decision.PASSENGERS;
@@ -134,21 +136,30 @@ public class Audit {
 
     }
 
+    /**
+     * Add survival rates for the characteristic
+     * @param characteristic - characteristic
+     * @param rate - survival rate
+     * @return String
+     */
     private String addCharactSurvRate(String characteristic, double rate){
 //        rate = Math.round(rate * 10) / 10.0;
         String truncatedRate = String.valueOf(rate).substring(0,3);
         return characteristic + ": " + truncatedRate + "\n";
     }
 
+    /**
+     * Produce the stats in survival rate descending order
+     * @return TreeSet
+     */
     public TreeSet<Map.Entry<String, Double>> generateDescendOrderedStats(){
-        /*
-        Produce stats in descending order
-         */
         HashMap<String, Double> survivalStats = new HashMap<>();
         for (Map.Entry<String, ArrayList<Integer>> entry : this.statsDict.entrySet()){
             String characteristic = entry.getKey();
             ArrayList<Integer> survivalAndTotal = entry.getValue();
-            survivalStats.put(characteristic, (double) survivalAndTotal.get(0)/survivalAndTotal.get(1));
+            double survivalRate =
+                    Double.parseDouble(String.valueOf((double) survivalAndTotal.get(0)/survivalAndTotal.get(1)).substring(0,3));
+            survivalStats.put(characteristic, survivalRate);
         }
         TreeSet<Map.Entry<String, Double>> sortedStats = new TreeSet(new Comparator<Map.Entry<String, Double>>(){
             @Override
@@ -175,7 +186,11 @@ public class Audit {
         return sortedStats;
     }
 
-    public String generateStatistic(){
+    /**
+     * Generate the statistics
+     * @return String
+     */
+    public String generateStats(){
         StringBuilder summaryStringBuilder = new StringBuilder(
                 "======================================\n" +
                 "# " + this.auditType + " Audit\n" +
@@ -195,13 +210,20 @@ public class Audit {
 
     @Override
     public String toString() {
-        return generateStatistic();
+        return generateStats();
     }
 
-    public void printStatistic(){
+    public void printStatistics(){
+        /*
+        Print Statistics
+         */
         System.out.print(this.toString());
     }
 
+    /**
+     * print the audit result to file
+     * @param filepath - result file pat
+     */
     public void printToFile(String filepath){
         String directoryName = filepath.substring(0, filepath.indexOf("/"));
         String fileName = filepath.substring(0, filepath.indexOf("/"));
@@ -224,6 +246,9 @@ public class Audit {
         }
     }
 
+    /**
+     * Handle User Decision Input
+     */
     private void handleUserDecisionInput(){
         String input = this.scanner.nextLine();
         switch (input) {
@@ -240,6 +265,10 @@ public class Audit {
         }
     }
 
+    /**
+     * Run the audit
+     * @param runs - number of scenarios
+     */
     public void run(int runs){
         this.runs += runs;
         if (this.auditType.equals("User")) {
@@ -250,7 +279,7 @@ public class Audit {
                 handleUserDecisionInput();
                 updateStats(scenario, this.userDecision);
             }
-            this.printStatistic();
+            this.printStatistics();
             if (this.saveUserDecision) { this.printToFile("logs/user.log"); }
         } else {
             for (int i = 0; i < runs; i++) {
@@ -258,18 +287,21 @@ public class Audit {
                 EthicalEngine.Decision decision = EthicalEngine.decide(scenario);
                 updateStats(scenario, decision);
             }
-            this.printStatistic();
+            this.printStatistics();
             this.printToFile("logs/results.log");
         }
     }
 
+    /**
+     * Run audit with random scenarios
+     */
     public void run(){
         int runsAcc = 0;
         if (this.auditType.equals("User")) {
             for (Scenario value : this.scenarios) {
                 if (runsAcc == 3) {
                     runsAcc = 0;
-                    this.printStatistic();
+                    this.printStatistics();
                     System.out.println("Would you like to continue? (yes/no)");
                     String input = this.scanner.nextLine();
                     if (input.equals("no")) break;
@@ -282,7 +314,7 @@ public class Audit {
                 this.handleUserDecisionInput();
                 updateStats(scenario, this.userDecision);
             }
-            this.printStatistic();
+            this.printStatistics();
             if (this.saveUserDecision) { this.printToFile("logs/user.log"); }
         } else {
             for (Scenario scenario : this.scenarios) {
@@ -293,17 +325,18 @@ public class Audit {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        Audit audit = new Audit();
-        audit.run(10);
-        audit.run(50);
-        audit.run(100);
 
+//    public static void main(String[] args) throws IOException {
+//        Audit audit = new Audit();
+//        audit.run(10);
+//        audit.run(50);
+//        audit.run(100);
+//
 //        EthicalEngine engine = new EthicalEngine();
 //        Scenario[] scenarios = engine.readConfigFile("SelfTest/data/config1");
 //        Audit audit1 = new Audit(scenarios);
 //        audit1.run();
 //        System.out.println("logs/results.log".substring("logs/results.log".indexOf("/")+1));
-    }
+//    }
 }
 
